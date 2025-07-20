@@ -11,6 +11,6 @@ position = Vector2(640, 75)
 StrumLinePos = 0.5
 isPlayer = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="TestCamera" type="Camera2D" parent="."]
 position = Vector2(639, 360)
 zoom = Vector2(0.455, 0.455)

@@ -84,7 +84,7 @@ func _process(delta: float) -> void:
 	notePath_border.self_modulate = notePath.self_modulate
 	
 	loop_for_notes(func(note:Note):
-		if note.render or (note.strumTime - Conductor.song_position) >= 1500: return
+		if note.render or (note.strumTime - Conductor.song_position) >= notePath.get_point_position(notePath.points.size()-1).y: return
 		note.render = true
 		note.visible = true
 	)
@@ -116,6 +116,5 @@ func process_pressed():
 	# use the `hitNote` variable and since each `Note` will have the reference to the strum, just check in the note directly so there is no looping involved.
 	# or just do a big loop for each note and update them once in the proccess 🤷‍♂️
 	loop_for_notes(func(note):
-		#print("canBeHit: %s | wasGoodHit: %s" % [note.canBeHit, note.wasGoodHit])
 		if note.canBeHit and !note.wasGoodHit: note.goodNoteHit()
 	)
