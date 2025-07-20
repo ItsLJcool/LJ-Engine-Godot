@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://mj02c62c72tl"]
+
+[ext_resource type="Script" uid="uid://db4uwbp0geoiv" path="res://Funkin/Game/StrumLine.gd" id="1_xe53f"]
+
+[node name="StrumLine" type="Node2D"]
+position = Vector2(244.8, 75)
+script = ExtResource("1_xe53f")
+metadata/render_paths = true
+metadata/paths_opacity = 0.5
+
+[node name="Strums" type="Node2D" parent="."]
+editor_description = "Data container for your Strum class"
