@@ -40,7 +40,7 @@ signal step_hit(step:int)
 signal beat_hit(beat:int)
 signal measure_hit(measure:int)
 signal bpm_change(bpm:float)
-signal song_start
+signal song_start()
 signal song_progress_update
 
 var paused:bool = false

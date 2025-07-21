@@ -8,8 +8,9 @@ var testNote = preload("res://Funkin/Game/Note.tscn")
 func _ready() -> void:
 	
 	var song = Song.new()
-	song.play("linkbite")
+	song.init("linkbite")
 	add_child(song)
+	Conductor.intro(4)
 	#song.codenameParse("linkbite", "hard", [player])
 
 	player.add_note(0, 2500, 1000)

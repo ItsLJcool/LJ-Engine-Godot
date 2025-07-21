@@ -11,10 +11,10 @@ var isReady:bool = false;
 static var songsPath:String = &"res://Assets/Songs"
 
 func _ready():
+	Conductor.song_start.connect(start)
 	add_child(vocal_player)
-	start()
 
-func play(songName:String):
+func init(songName:String):
 	isReady = false
 	Conductor.reset()
 	
@@ -24,7 +24,7 @@ func play(songName:String):
 	
 	Conductor.audio_stream = load("%s/%s/song/Inst.ogg" % [songsPath, songName])
 	isReady = true
-	
+
 func start():
 	if !isReady: return
 	
@@ -36,7 +36,6 @@ func pause():
 
 func resume():
 	Conductor.resume()
-
 
 # Chart Parsing
 static func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array[StrumLine] = [])->void:
@@ -60,8 +59,4 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 		if !notes: continue
 		
 		for note in notes:
-			strumline.loop_for_strums(func(strum:Strum):
-				if !strum is Strum: return
-				if strum.direction != note.id: return
-				strum.spawn_note(note.time, note.sLen)
-			)
+			strumline.add_note(note.id, note.time, note.sLen)

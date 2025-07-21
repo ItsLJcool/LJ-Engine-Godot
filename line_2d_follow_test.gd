@@ -19,11 +19,13 @@ func _process(delta:float):
 	
 	var path_points := notePath.points.duplicate()
 	
-	var distance:float = strumTime - Conductor.song_position
-	var node_progress:float = 1.0 - ((path_length - 1) * min(path_points[-1].y, distance)) / 1500
+	var distance:float = strumTime - temp_song_position
+	var t:float = -((path_length - 1) * min(path_points[-1].y, distance)) / 1500
 	
-	self.global_position = get_path_position(notePath, node_progress)
-
+	if (t > 1):
+		self.global_position.y = distance
+		return
+	self.global_position = get_path_position(notePath, t)
 
 
 func get_path_position(path:Line2D, percent:float) -> Vector2:
