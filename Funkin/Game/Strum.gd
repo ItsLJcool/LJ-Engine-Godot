@@ -6,8 +6,8 @@ signal onInput(direction:NoteDirection, input:InputType)
 
 @onready var sprite:AnimatedSprite2D = $Sprite
 @onready var notesGroup:Node2D = $Notes
-@onready var notePath:Line2D = $NotePath
-@onready var notePath_border:Line2D = $NotePath/Border
+
+var render_limit:float = 1500
 
 #region Strum Values
 
@@ -65,14 +65,11 @@ var input_name = "NOTE_%s"
 static func direction_to_string(dir:NoteDirection = NoteDirection.LEFT)->String: return NoteDirection.keys()[dir].to_lower()
 
 # Handling how notes are added and removed from the Strum
-var note_blueprint := preload("res://Funkin/Game/Note.tscn")
+const note_blueprint := preload("res://Funkin/Game/Note.tscn")
 func spawn_note(time:float, sustainLength:float)->void:
 	var note = note_blueprint.instantiate()
-	note.strum = self
-	note.isSustainNote = (sustainLength != 0)
 	notesGroup.add_child(note)
 	note.init(self, time, sustainLength)
-	note.visible = false
 
 func loop_for_notes(fiction:Callable) -> void:
 	for i in notesGroup.get_children():
@@ -80,11 +77,9 @@ func loop_for_notes(fiction:Callable) -> void:
 		fiction.call(i)
 
 func _process(delta: float) -> void:
-	notePath_border.points = notePath.points
-	notePath_border.self_modulate = notePath.self_modulate
 	
 	loop_for_notes(func(note:Note):
-		if note.render or (note.strumTime - Conductor.song_position) >= notePath.get_point_position(notePath.points.size()-1).y: return
+		if note.render or (note.strumTime - Conductor.song_position) >= render_limit: return
 		note.render = true
 		note.visible = true
 	)
@@ -103,6 +98,7 @@ func on_input():
 	
 	if Input.is_action_just_released(action):
 		sprite.play("%s%s" % [dir, _static])
+		hitNote = false
 		onInput.emit(direction, InputType.JustReleased)
 
 func process_pressed():

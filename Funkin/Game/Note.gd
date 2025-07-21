@@ -16,13 +16,15 @@ var strum:Strum
 
 #region Note Information
 
+## If things like updating the note should occur. Internal variable used by Strum.gd
 var render:bool = false
 
 var isSustainNote:bool = true
 
 var susLength:float = 200:
 	set(value):
-		susLength = value
+		if susLength <= 0.0: isSustainNote = false
+		susLength = abs(value)
 		if sustain and end:
 			sustain.set_point_position(sustain.get_point_count()-1, Vector2(0, value))
 			end.flip_v = true if value < 0 else false
@@ -32,7 +34,6 @@ var susLength:float = 200:
 
 var strumTime:float = 3000
 
-# The * 0.5 is so that it's easier to hit them too late, instead of too early
 var earlyPressWindow:float = 0.5
 var latePressWindow:float = 1
 
@@ -40,13 +41,16 @@ var canBeHit:bool = false
 var tooLate:bool = false
 var wasGoodHit:bool = false
 
+## Honestly I have no fucking clue what this does beside increase the- oh wait right its in the name
 var hitWindow:float = 160;
 
-# To be avoided by botplay
+## If you should NOT hit the note and avoid it.
 var avoid:bool = false;
 #endregion
 
-func init(_strum:Strum, time:float, sustainLength:float):
+func init(_strum:Strum, time:float, sustainLength:float)->void:
+	self.visible = false
+	
 	strum = _strum
 	strumTime = time
 	susLength = sustainLength
@@ -61,9 +65,8 @@ func init(_strum:Strum, time:float, sustainLength:float):
 	sustain.texture = load(sustainsPath % ["default", dirName])
 	end.texture = load(endPath % ["default", dirName])
 
-var path_points:PackedVector2Array = []
 func _ready():
-	#if (!Engine.is_editor_hint()): clipRect.clip_contents = true;
+	if (!Engine.is_editor_hint()): clipRect.clip_contents = true;
 	self.position.y = -5000
 	
 func deleteNote():
@@ -71,27 +74,22 @@ func deleteNote():
 
 func goodNoteHit():
 	wasGoodHit = true
+	strum.hitNote = true
 	
 	#var noteDiff = abs(Conductor.song_position - strumTime);
 	#var daRating:String = "sick";
 	#var score:int = 300;
 	#var accuracy:float = 1;
 	
-	if !isSustainNote:
-		deleteNote()
-	else:
-		sprite.self_modulate.a = 0
+	if !isSustainNote: deleteNote()
+	else: sprite.self_modulate.a = 0
 
 func _process(delta: float) -> void:
 	if !render: return
-	path_points = strum.notePath.points.duplicate()
-	update_note(delta)
+	update_note()
 
-var test:float = 0
-func update_note(_delta:float):
-	if (strumTime < path_points[-1].y): return
-	self.position = update_path(self.position)
-	#self.position.y = (strumTime - Conductor.song_position) * (0.45 * (int(strum.scrollSpeed * 100) / 100) )
+func update_note():
+	self.position.y = (strumTime - Conductor.song_position) * (0.45 * (int(strum.scrollSpeed * 100) / 100) )
 	
 	canBeHit = ((strumTime + susLength) > Conductor.song_position - (hitWindow * latePressWindow)
 		and strumTime < Conductor.song_position + (hitWindow * earlyPressWindow))
@@ -112,86 +110,32 @@ func update_note(_delta:float):
 	
 	updateSustain()
 
-var path_NodeIndex:int = -1
-var path_NextNodeIndex:int = -1
-
-var sustainPath_Amount:float = 5
-func update_path(pos:Vector2)->Vector2:
-	var path_length = path_points.size()
-	
-	if path_length <= 0: return pos
-	if path_length == 1:
-		var path_node = path_points[0]
-		return Vector2(path_node.x, path_node.y)
-	
-	#@warning_ignore("integer_division")
-	#var distance = (strumTime - Conductor.song_position) * (0.45 * (int(strum.scrollSpeed * 100) / 100))
-	var distance = strumTime - Conductor.song_position
-	
-	var node_progress = ((path_length - 1) * min(path_points[-1].y, distance)) / 1500
-	path_NodeIndex = int(floor(node_progress))
-	path_NextNodeIndex = min(path_NodeIndex + 1, path_length - 1)
-	var next_node_ratio = node_progress - path_NodeIndex
-	
-	if (path_NodeIndex < 0 or path_NextNodeIndex < 0): return Vector2(0, distance)
-	
-	var this_node = path_points[path_NodeIndex]
-	var next_node = path_points[path_NextNodeIndex]
-
-	var pos_x = lerp(this_node.x, next_node.x, next_node_ratio)
-	var pos_y = lerp(this_node.y, next_node.y, next_node_ratio)
-	return Vector2(pos_x, pos_y)
 
 func updateSustain():
-	if path_points.size() < 2: return
-
-	var path_total = path_points.size()
-	var sustain_points: Array[Vector2] = []
+	var lastPoint = sustain.get_point_position(sustain.get_point_count()-1)
+	var _endSize = end.texture
 	
-	var remaining_length = susLength
-	var i = path_NodeIndex
-	if i < 0: i = 0
-
-	# Get starting point from interpolation
-	var this_node = path_points[i]
-	var next_node = path_points[min(i + 1, path_total - 1)]
-	var progress = ((strumTime - Conductor.song_position) / (path_points[-1].y - path_points[0].y)) * (path_total - 1)
-	var t = clamp(progress - i, 0.0, 1.0)
-	var start_point = this_node.lerp(next_node, t)
-
-	var current_pos = start_point
-	sustain_points.append(to_local(current_pos))
-
-	while i < path_total - 1 and remaining_length > 0:
-		var p1 = path_points[i]
-		var p2 = path_points[i + 1]
-
-		if p1.distance_to(p2) == 0:
-			i += 1
-			continue
-
-		var segment_dir = (p2 - p1).normalized()
-		var segment_remaining = p2.distance_to(current_pos)
-
-		if segment_remaining < remaining_length:
-			current_pos = p2
-			sustain_points.append(to_local(current_pos))
-			remaining_length -= segment_remaining
-			i += 1
-		else:
-			current_pos += segment_dir * remaining_length
-			sustain_points.append(to_local(current_pos))
-			remaining_length = 0
-			break
-
-	# Update Line2D
-	sustain.clear_points()
-	for p in sustain_points:
-		sustain.add_point(p)
-
-	# Update end sprite
-	if sustain_points.size() >= 2:
-		var end_pos = sustain_points[-1]
-		var prev_pos = sustain_points[-2]
-		end.position = end_pos
-		end.rotation = (end_pos - prev_pos).angle()
+	var lengthPog = (0.45 * round(strum.scrollSpeed * 100) / 100);
+	var yVal = 0;
+	if wasGoodHit:
+		yVal = ((susLength + (strumTime - Conductor.song_position)) * lengthPog);
+		
+		sustain.position.y = -(position.y - strum.position.y);
+	else:
+		yVal = (susLength * lengthPog);
+		
+		sustain.position.y = 0;
+	
+	yVal -= _endSize.get_height();
+	
+	lastPoint.y = yVal;
+	lastPoint.y = max(lastPoint.y, 0)
+	
+	sustain.set_point_position(sustain.get_point_count()-1, lastPoint);
+	
+	clipRect.position.x = -(_endSize.get_width() * 0.5);
+	clipRect.size.x = _endSize.get_width();
+	clipRect.size.y = yVal + _endSize.get_height();
+	
+	end.position.x = _endSize.get_width() * 0.5;
+	end.position.y = yVal;

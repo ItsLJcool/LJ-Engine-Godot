@@ -13,4 +13,3 @@ isPlayer = true
 
 [node name="TestCamera" type="Camera2D" parent="."]
 position = Vector2(639, 360)
-zoom = Vector2(0.455, 0.455)

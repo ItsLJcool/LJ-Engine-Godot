@@ -26,7 +26,7 @@ const MAX_STRUMS:int = 4
 		update_strums(false)
 
 ## Blueprint to spawn new strums
-const strum_blueprint = preload("res://Funkin/Game/Strum.tscn")
+const strum_blueprint := preload("res://Funkin/Game/Strum.tscn")
 
 ## If the player's input should be on this strumline, or if the CPU should be hitting the notes.
 @export var isPlayer:bool = false
@@ -35,7 +35,7 @@ const strum_blueprint = preload("res://Funkin/Game/Strum.tscn")
 
 func _ready()->void:
 	print()
-	update_strums(true) # just in case ig
+	update_strums(true)
 	self.position.y = 75
 
 func add_note(directon:Strum.NoteDirection, time:float, susLength:float)->void:
@@ -45,15 +45,8 @@ func add_note(directon:Strum.NoteDirection, time:float, susLength:float)->void:
 
 func _process(_delta: float) -> void:
 	
-	loop_for_strums(func(strum:Strum): 
-		strum.notePath.visible = self.get_meta("render_paths", false)
-		strum.notePath.self_modulate.a = self.get_meta("paths_opacity", 1)
-	)
-	
 	if isPlayer:
-		for strum in strumsGroup.get_children():
-			if !strum is Strum: continue
-			strum.on_input()
+		loop_for_strums(func(strum:Strum): strum.on_input() )
 	
 
 func update_strums(_queue_free:bool = false)->void:

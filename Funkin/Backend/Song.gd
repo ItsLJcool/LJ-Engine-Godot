@@ -4,8 +4,6 @@ class_name Song extends Node
 
 var vocal_player:AudioStreamPlayer = AudioStreamPlayer.new()
 
-var chart:Dictionary = {}
-
 var isReady:bool = false;
 
 static var songsPath:String = &"res://Assets/Songs"
@@ -54,6 +52,7 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 	for idx in range(0, strumLines.size()):
 		var strumline:StrumLine = strumLines[idx]
 		if !strumline: continue
+		strumline.loop_for_strums(func(strum:Strum): strum.scrollSpeed = json.scrollSpeed)
 		
 		var notes = jsonStrumLine[idx].notes
 		if !notes: continue
