@@ -18,7 +18,7 @@ Here is all that I have gotten to work so far:
 - Parses CodenameEngine charting for now.
 
 3. Note.gd
-- The sustain is a `Line2D` so you can define points for your funky sustains. It's also used for the `Strum.gd`'s `NotePath` so it can follow it smoothly. (This has yet to be properly implemented, I can't figure out how to make it work 😭)
+- The sustain is a `Line2D` so you can define points for your funky sustains.
 
 - The Actual Note Sprite is seperate from the `Line2D` so you can rotate, scale and move the normal note around. I'd reccomend only using it to rotate the note around as it will look weird otherwise.
 
@@ -29,22 +29,34 @@ Here is all that I have gotten to work so far:
 
 - It has the same structure like the `Note.gd`, as the Actual sprite for the Static Note is a child of the `Strum` `Node2D`
 
-- The `NotePath` is just points that the notes will follow along. You can update the points Dynamically, and the notes will follow the new path.
-
 5. StrumLine.gd
-- All this really is used for is to wrap your `Strum`s Into a single `Node2D` and some variables you can mess around with. Like the position of the X and Y of the window, the amount ***(currently doesn't work, no multikey supported)***
+- All this really is used for is to wrap your `Strum`s Into a single `Node2D` and some variables you can mess around with. Like the position of the X and Y of the window, and the amount ***(currently doesn't work, no multikey supported)***
 
 And that's really for for now.
 
-## Need help on (TODO)
+# Need help on (TODO)
 This is in priority order
 
-1. `Strum`'s NotePath breaking for `Note` sustains.
+1. Add FPS Counter, PC Specs, and other useful information.
 
-2. UI For `ImagesToSpriteFrames` to select the image ang xml file to automatically convert.
+2. UI For `ImagesToSpriteFrames` to select the image and xml file to automatically convert.
 
 3. Maybe rework file structure???
 
+4. Rework how `Songs` are loaded and handled for parsing charts and playing songs.
+
+5. Start the 2D game elements for the game itself.
+- Characters | Editors, parsers, etc.
+- Chart Editor | LOW PRIORITY
+- Stage Editor | LOW PRIORITY
+- Note Types | Medium Priority
+
+6. Modding Framework using the GDScript language, or even use LUAU?? ***(I'd perfer GDScript for easy engine interp.)***
+
+7. Support Multikey | LOW PRIORITY
+
+8. Support 3D game elements | SUPER LOW PRIORITY
+
 ## Special Thanks
 - Aliza - For the `Conductor.gd` Script
-- theo - For helping with some of the `NotePath` information
+- theo - For helping with some of the `NotePath` information (Currently going forth without using custom pathing for notes. Need to keep the scope a bit low)
