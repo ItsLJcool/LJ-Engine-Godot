@@ -13,12 +13,16 @@ var temp_song_position:float = 0
 var max_scroll_time = 1500.0
 func _process(delta:float):
 	temp_song_position += delta * 1000
-	if notePath.points.size() < 2: return
 	
-	var time_remaining = clamp(strumTime - temp_song_position, 0.0, max_scroll_time)
-	var t = 1.0 - (time_remaining / max_scroll_time)
+	var path_length:int = notePath.points.size()
+	if path_length < 2: return
 	
-	self.global_position = get_path_position(notePath, t)
+	var path_points := notePath.points.duplicate()
+	
+	var distance:float = strumTime - Conductor.song_position
+	var node_progress:float = 1.0 - ((path_length - 1) * min(path_points[-1].y, distance)) / 1500
+	
+	self.global_position = get_path_position(notePath, node_progress)
 
 
 
@@ -31,8 +35,8 @@ func get_path_position(path:Line2D, percent:float) -> Vector2:
 		segment_lengths.append(segment_len)
 		total_length += segment_len
 	
-	var target_distance = percent * total_length
-	var distance_covered = 0.0
+	var target_distance:float = percent * total_length
+	var distance_covered:float = 0.0
 	
 	for i in range(segment_lengths.size()):
 		var seg_len = segment_lengths[i]

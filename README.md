@@ -1,4 +1,5 @@
 # LJ Engine - Godot
+### This Project is using 4.4.1 Stable
 Welcome to the LJ Engine Godot repository.
 
 This is just a fun side project for me to learn 2D godot and wrap my head around some FNF Concept ideas implemented into Godot.
