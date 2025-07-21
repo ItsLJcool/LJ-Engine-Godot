@@ -10,9 +10,9 @@ func _ready() -> void:
 	var song = Song.new()
 	song.play("linkbite")
 	add_child(song)
-	#song.codenameParse("linkbite", "hard", [player])
+	song.codenameParse("linkbite", "hard", [player])
 
-	player.add_note(0, 2500, 1000)
+	#player.add_note(0, 2500, 1000)
 
 var amount:float = 20;
 func _process(delta: float) -> void:

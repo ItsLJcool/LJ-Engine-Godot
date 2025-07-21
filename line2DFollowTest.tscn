@@ -1,3 +1,30 @@
-[gd_scene format=3 uid="uid://cm6pchvvmteip"]
+[gd_scene load_steps=3 format=3 uid="uid://cm6pchvvmteip"]
+
+[ext_resource type="Script" uid="uid://belrofifb0ojn" path="res://line_2d_follow_test.gd" id="1_1jax1"]
+[ext_resource type="Texture2D" uid="uid://dfogsshx44v6" path="res://icon.png" id="2_gvv81"]
 
 [node name="Line2dFollowTest" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(335, 214)
+
+[node name="PathToFollow" type="Line2D" parent="."]
+points = PackedVector2Array(484, 406, 512, 6)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Note" type="Node2D" parent="."]
+script = ExtResource("1_1jax1")
+
+[node name="sprite" type="Sprite2D" parent="Note"]
+texture = ExtResource("2_gvv81")
+
+[node name="sustain" type="Line2D" parent="Note"]
+position = Vector2(1, 0)
+points = PackedVector2Array(0, 0, 0, 200)
+width = 5.0
+default_color = Color(0, 0, 0, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2

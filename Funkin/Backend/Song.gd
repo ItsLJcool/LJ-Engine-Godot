@@ -1,5 +1,7 @@
 class_name Song extends Node
 
+# Probably remake this class
+
 var vocal_player:AudioStreamPlayer = AudioStreamPlayer.new()
 
 var chart:Dictionary = {}
@@ -16,7 +18,6 @@ func play(songName:String):
 	isReady = false
 	Conductor.reset()
 	
-	print()
 	vocal_player.stream = load("%s/%s/song/Voices.ogg" % [songsPath, songName])
 	vocal_player.name = "SongPlayer"
 	vocal_player.bus = "Music"
@@ -43,6 +44,7 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 	if (!FileAccess.file_exists(filePath)):
 		print("Path doesn't exist: ", filePath)
 		return
+	
 	var jsonString = FileAccess.open(filePath, FileAccess.READ)
 	var json = JSON.parse_string(jsonString.get_as_text())
 	if (!json is Dictionary):
@@ -51,29 +53,15 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 	
 	var jsonStrumLine = json.strumLines
 	for idx in range(0, strumLines.size()):
-		var strums:Node2D = strumLines[idx].find_child("Strums");
-		if !strums is Node2D: continue
+		var strumline:StrumLine = strumLines[idx]
+		if !strumline: continue
+		
 		var notes = jsonStrumLine[idx].notes
 		if !notes: continue
+		
 		for note in notes:
-			var strum:Strum = strums.get_children()[int(note.id)]
-			if !strum is Strum: continue
-			strum.spawn_note(note.time, note.sLen)
-	
-	#var strumlinesInGame = get_strumlines();
-	#for idx in range(0, strumlinesInGame.size()):
-		#var strumline = strumlinesInGame[idx];
-		#strumline.scrollSpeed = json.scrollSpeed
-		#strumline.instanceArrows();
-		#strumline.connect("onNoteHit", onStrumsHit);
-				#
-		#var notes = strumLines[idx].notes;
-		#var __notes:Array[Dictionary] = []
-		#for data in notes:
-			#var noteData:Dictionary = {
-				#"strumTime": data.time,
-				#"sustainLength": data.sLen,
-				#"direction": data.id,
-			#}
-			#__notes.push_back(noteData)
-		#strumline.addNotes(__notes)
+			strumline.loop_for_strums(func(strum:Strum):
+				if !strum is Strum: return
+				if strum.direction != note.id: return
+				strum.spawn_note(note.time, note.sLen)
+			)

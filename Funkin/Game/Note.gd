@@ -91,7 +91,7 @@ var test:float = 0
 func update_note(_delta:float):
 	if (strumTime < path_points[-1].y): return
 	self.position = update_path(self.position)
-	#self.position.y = (strumTime - Conductor.saaong_position) * (0.45 * (int(strum.scrollSpeed * 100) / 100) )
+	#self.position.y = (strumTime - Conductor.song_position) * (0.45 * (int(strum.scrollSpeed * 100) / 100) )
 	
 	canBeHit = ((strumTime + susLength) > Conductor.song_position - (hitWindow * latePressWindow)
 		and strumTime < Conductor.song_position + (hitWindow * earlyPressWindow))
