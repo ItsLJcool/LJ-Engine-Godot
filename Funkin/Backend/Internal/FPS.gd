@@ -1,24 +1,33 @@
-extends CanvasLayer
+class_name FPS extends RichTextLabel
 
-@onready var fps_label = $FPSLabel
-func _ready():
-	_update_label()
-	
-func _process(delta):
+var normal_color:Color = Color(1, 1, 1)
+var below_color:Color = Color(1, 0, 0)
+var average_color:Color = Color(1, 1, 0)
+
+var time:float = 0
+
+var textDisplay:String = " FPS: %d \n VRAM: %s \n Memory: %s \n\n Godot %s"
+func _process(delta:float):
 	var fps = Engine.get_frames_per_second()
 	var texMem = Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)
 	var realMem = Performance.get_monitor(Performance.MEMORY_STATIC)
-	fps_label.text = " FPS: %d \n VRAM: %s \n Memory: %s" % [fps, String.humanize_size(texMem), String.humanize_size(realMem)]
-	if fps < 30:
-		fps_label.modulate = Color(1, 0, 0)
-	elif fps < 60:
-		fps_label.modulate = Color(1, 1, 0)
-	else:
-		fps_label.modulate = Color(1, 1, 1)
-	_update_label()
 	
-func _update_label():
-	var font_size = int(get_viewport().size.x * 0.02)  
-	var label_width = fps_label.get_minimum_size().x
-	var viewport_size = get_viewport().size
-	fps_label.position = Vector2(viewport_size.x - label_width - 230, 5)  
+	var engine_info = Engine.get_version_info()
+	var engine_string = "v%s.%s.%s - %s (%s)" % [engine_info.major, engine_info.minor, engine_info.patch, engine_info.status, engine_info.build]
+	
+	self.text = (textDisplay %
+	[fps, String.humanize_size(texMem), String.humanize_size(realMem), engine_string] )
+	
+	var current_color:Color = normal_color
+	
+	if fps < 30:
+		time = 0
+		current_color = below_color
+	elif fps < 60:
+		time = 0
+		current_color = average_color
+	else: time = 0
+	
+	if time < 1: time += delta * 10
+	
+	self.modulate = self.modulate.lerp(current_color, time)

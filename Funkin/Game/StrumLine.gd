@@ -39,10 +39,10 @@ func _ready()->void:
 	self.position.y = 75
 
 ## Adds a note and initalizes it into the Corresponding Strum Direction
-func add_note(directon:Strum.NoteDirection, time:float, susLength:float)->void:
-	var strum:Strum = strumsGroup.get_children()[directon]
+func add_note(dir:Strum.NoteDirection, time:float, susLength:float)->void:
+	var strum:Strum = strumsGroup.get_children()[dir]
 	if !strum: return
-	strum.spawn_note(time, susLength)
+	strum.preload_note(time, susLength)
 
 func _process(_delta: float) -> void:
 	

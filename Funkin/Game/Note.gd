@@ -17,25 +17,27 @@ var strum:Strum ## The Note's bounded Strum
 #region Note Information
 
 ## If things like updating the note should occur. Internal variable used by Strum.gd
-var render:bool = false
+var render:bool = false:
+	set(value):
+		render = value
+		self.visible = value
 
 var isSustainNote:bool = true ## If the note is considered to have a Sustain and a tail.
 
 var susLength:float = 200: ## The length of the sustain.
 	set(value):
-		if susLength <= 0.0: isSustainNote = false
+		if value <= 0.0: isSustainNote = false
 		susLength = abs(value)
 		if sustain and end:
 			sustain.visible = isSustainNote
 			end.visible = isSustainNote
 			
 			sustain.set_point_position(sustain.get_point_count()-1, Vector2(0, value))
-			end.flip_v = true if value < 0 else false
-			end.flip_h = end.flip_v
 			end.position = sustain.position
 			end.position.y += value
 
-var strumTime:float = 3000 ## The time in MS when the note should be hit
+var strumTime:float = 3000: ## The time in MS when the note should be hit
+	set(value): strumTime = abs(value)
 
 var earlyPressWindow:float = 0.5 ## Placeholder Information. I have no clue what this does
 var latePressWindow:float = 1 ## Placeholder Information. I have no clue what this does
@@ -58,8 +60,7 @@ func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing t
 	
 	if (sprite.sprite_frames.get_meta("use_rotation")):
 		match strum.direction:
-			Strum.NoteDirection.DOWN, Strum.NoteDirection.UP:
-				sprite.rotation_degrees = -90
+			Strum.NoteDirection.DOWN, Strum.NoteDirection.UP: sprite.rotation_degrees -= 90
 	
 	var dirName:String = Strum.direction_to_string(strum.direction)
 	sprite.play(dirName)
@@ -101,10 +102,10 @@ func update_note()->void: ## Call this to update position progression, and if th
 	
 	if ((strumTime + susLength) < (Conductor.song_position - hitWindow) and !wasGoodHit):
 		tooLate = true
-
+	
 	if (!strum.strumLine.isPlayer && !avoid && !wasGoodHit && strumTime < Conductor.song_position):
 		goodNoteHit()
-
+	
 	if (wasGoodHit && (strumTime + susLength) < Conductor.song_position):
 		deleteNote()
 		return
@@ -116,27 +117,30 @@ func update_note()->void: ## Call this to update position progression, and if th
 	if isSustainNote: update_sustain()
 
 func update_sustain()->void: ## Updates the Length of the sustain when hitting or not hitting.
-	var lastPoint := sustain.get_point_position(sustain.get_point_count()-1)
+	var point_count:int = sustain.get_point_count()
+	var last_point:Vector2 = sustain.get_point_position(point_count-1)
 	
-	var lengthPog:float = (0.45 * round(strum.scrollSpeed * 100) / 100);
-	var yVal:float = 0.0;
+	var endSize:Vector2 = Vector2(end.texture.get_width(), end.texture.get_height())
+	
+	var lengthPog:float = (0.6 * round(strum.scrollSpeed * 100) / 100)
+	var y_val:float = 0.0
+	
 	if wasGoodHit:
-		yVal = ((susLength + (strumTime - Conductor.song_position)) * lengthPog);
-		sustain.position.y = -(position.y - strum.position.y);
+		y_val = ((susLength + (strumTime - Conductor.song_position)) * lengthPog)
+		sustain.position.y = -(position.y - strum.position.y)
 	else:
-		yVal = (susLength * lengthPog);
-		sustain.position.y = 0;
+		y_val = (susLength * lengthPog)
+		sustain.position.y = 0
 	
-	yVal -= end.texture.get_height();
+	y_val -= endSize.y
 	
-	lastPoint.y = yVal;
-	lastPoint.y = max(lastPoint.y, 0)
+	last_point.y = max(y_val, 0)
 	
-	sustain.set_point_position(sustain.get_point_count()-1, lastPoint);
+	sustain.set_point_position(point_count-1, last_point)
 	
-	clipRect.position.x = -(end.texture.get_width() * 0.5);
-	clipRect.size.x = end.texture.get_width();
-	clipRect.size.y = yVal + end.texture.get_height();
+	clipRect.position.x = -(endSize.x * 0.5)
+	clipRect.size.x = endSize.x
+	clipRect.size.y = y_val + endSize.y
 	
-	end.position.x = end.texture.get_width() * 0.5;
-	end.position.y = yVal;
+	end.position.x = endSize.x * 0.5
+	end.position.y = y_val

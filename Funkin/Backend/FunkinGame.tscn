@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dwwj0wky3eraf"]
+[gd_scene load_steps=3 format=3 uid="uid://dwwj0wky3eraf"]
 
 [ext_resource type="Script" uid="uid://rgbh5x7blv27" path="res://Funkin/Backend/FunkinGame.gd" id="1_gak6w"]
+[ext_resource type="PackedScene" uid="uid://dy7tpi7e47aww" path="res://Funkin/Backend/Internal/FPS.tscn" id="2_yja8m"]
 
 [node name="FunkinGame" type="Node"]
 script = ExtResource("1_gak6w")
@@ -12,4 +13,6 @@ position = Vector2(640, 360)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="FPS" type="CanvasLayer" parent="."]
+[node name="Information" type="CanvasLayer" parent="."]
+
+[node name="FPS" parent="Information" instance=ExtResource("2_yja8m")]

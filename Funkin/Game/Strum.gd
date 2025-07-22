@@ -56,7 +56,6 @@ enum InputType {
 func _ready():
 	init()
 
-
 func init()->void: ## Initalizes the strum 
 	if !sprite: return
 	sprite.play("%s%s" % [direction_to_string(direction), _static])
@@ -65,24 +64,23 @@ const INPUT_NAME = &"NOTE_%s" ## For inputs, using the Keybind names
 ## Converts Enum to string value.
 static func direction_to_string(dir:NoteDirection = NoteDirection.LEFT)->String: return NoteDirection.keys()[dir].to_lower()
 
+# Idea: Use a 1D Array and store information as slices. i.e every 3 index we identify for `d`, `t`, and `l`.
+var notes_to_spawn:Array[Dictionary] = [] ## Container for preloading notes.
+## Used to append information to a Buffer to then spawn a note when it's time.
+func preload_note(time:float, susLength:float)->void: notes_to_spawn.push_back({ "t": time, "l": susLength })
+
 # Handling how notes are added and removed from the Strum
 const note_blueprint := preload("res://Funkin/Game/Note.tscn") ## The Note Scene that is used to dynamically create notes
-func spawn_note(time:float, sustainLength:float)->void:
+func spawn_note(time:float, sustainLength:float)->Note: ## Physically Spawns the note in the Notes Node2D. Returns the newly created instance
 	var note = note_blueprint.instantiate()
 	notesGroup.add_child(note)
 	note.init(self, time, sustainLength)
+	return note
 
 func loop_for_notes(fiction:Callable) -> void: ## Simple utility function to quickly loop through all the notes
 	for i:Note in notesGroup.get_children():
 		if !i is Note: continue
 		fiction.call(i)
-
-func _process(_delta: float) -> void:
-	loop_for_notes(func(note:Note):
-		if note.render or (note.strumTime - Conductor.song_position) >= render_limit: return
-		note.render = true
-		note.visible = true
-	)
 
 ## Input Handler
 func on_input()->void:
@@ -109,11 +107,14 @@ func process_pressed()->void: ## When your activly pressing down on a key. Inter
 	onInput.emit(direction, InputType.Press)
 	
 	loop_for_notes(func(note:Note): if note.canBeHit and !note.wasGoodHit: note.goodNoteHit() )
+
+# Now we take the time to render
+func _process(_delta: float) -> void:
 	
-	# New idea. Filter out notes directly instead of looping through them all at once.
-	# Then just loop through the filter
-	
-	# Idea was good, it sucks though since it can sometimes just ghost kill notes
-	#var notes = notesGroup.get_children()
-	#notes = notes.filter(func(note): return (note.canBeHit and !note.wasGoodHit))
-	#for note:Note in notes: note.goodNoteHit()
+	var idx = notes_to_spawn.size()-1;
+	while(idx >= 0):
+		var note = notes_to_spawn[idx]
+		if (note.t - Conductor.song_position) <= render_limit: 
+			spawn_note(note.t, note.l).render = true
+			notes_to_spawn.remove_at(idx)
+		idx -= 1;

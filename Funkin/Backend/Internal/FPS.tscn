@@ -1,22 +1,16 @@
 [gd_scene load_steps=3 format=3 uid="uid://dy7tpi7e47aww"]
 
-[ext_resource type="Script" uid="uid://vc8nyengwomw" path="res://assets/scripts/autoload/FPS.gd" id="1_3nigx"]
-[ext_resource type="Theme" uid="uid://dt1vm13y0d6al" path="res://assets/theme/FPSLabel.tres" id="2_0som7"]
+[ext_resource type="Script" uid="uid://ducu7nq1xy3yr" path="res://Funkin/Backend/Internal/FPS.gd" id="1_ehkod"]
+[ext_resource type="FontFile" uid="uid://bdh15iqse6ylh" path="res://Assets/Fonts/Funkin.ttf" id="1_orjr1"]
 
-[node name="FPS" type="Node2D"]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-script = ExtResource("1_3nigx")
-
-[node name="FPSLabel" type="RichTextLabel" parent="CanvasLayer"]
-clip_contents = false
-offset_left = 917.0
-offset_right = 1150.0
-offset_bottom = 54.0
-theme = ExtResource("2_0som7")
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 12
-bbcode_enabled = true
-text = "FPS: 2000"
+[node name="FPS" type="RichTextLabel"]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 199.0
+offset_bottom = 43.0
+mouse_filter = 2
+theme_override_constants/outline_size = 8
+theme_override_fonts/normal_font = ExtResource("1_orjr1")
+text = "Im FPS'ing it so good"
 fit_content = true
-threaded = true
+script = ExtResource("1_ehkod")

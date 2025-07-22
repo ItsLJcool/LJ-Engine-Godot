@@ -34,29 +34,10 @@ Here is all that I have gotten to work so far:
 
 And that's really for for now.
 
-# Need help on (TODO)
-This is in priority order
-
-1. Add FPS Counter, PC Specs, and other useful information.
-
-2. UI For `ImagesToSpriteFrames` to select the image and xml file to automatically convert.
-
-3. Maybe rework file structure???
-
-4. Rework how `Songs` are loaded and handled for parsing charts and playing songs.
-
-5. Start the 2D game elements for the game itself.
-- Characters | Editors, parsers, etc.
-- Chart Editor | LOW PRIORITY
-- Stage Editor | LOW PRIORITY
-- Note Types | Medium Priority
-
-6. Modding Framework using the GDScript language, or even use LUAU?? ***(I'd perfer GDScript for easy engine interp.)***
-
-7. Support Multikey | LOW PRIORITY
-
-8. Support 3D game elements | SUPER LOW PRIORITY
+## Please go read the TODO.md file.
+It has a list of things needing to be done.
 
 ## Special Thanks
 - Aliza - For the `Conductor.gd` Script
 - theo - For helping with some of the `NotePath` information (Currently going forth without using custom pathing for notes. Need to keep the scope a bit low)
+- Nova - Helping out with the Repository
