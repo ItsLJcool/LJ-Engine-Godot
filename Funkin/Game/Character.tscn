@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://hvr7hgtgl5rf"]
+[gd_scene load_steps=2 format=3 uid="uid://c8hw7ros87stp"]
 
-[ext_resource type="Script" uid="uid://blop6ktg2hjmp" path="res://Funkin/Game/Character.gd" id="1_5wgne"]
+[ext_resource type="SpriteFrames" uid="uid://n013xbl0v11t" path="res://Assets/Characters/bf.tres" id="1_5wgne"]
 
 [node name="Character" type="AnimatedSprite2D"]
-script = ExtResource("1_5wgne")
+sprite_frames = ExtResource("1_5wgne")
+animation = &"BF Dead confirm"
+frame = 33
+frame_progress = 1.0
