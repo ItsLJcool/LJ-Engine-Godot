@@ -12,7 +12,7 @@ config_version=5
 
 config/name="LJ Engine Godot"
 config/description="Enter an interesting project description here!"
-run/main_scene="uid://csdbb2p7ar10k"
+run/main_scene="uid://dwwj0wky3eraf"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 

@@ -1,12 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://csdbb2p7ar10k"]
+[gd_scene load_steps=4 format=3 uid="uid://csdbb2p7ar10k"]
 
 [ext_resource type="Script" uid="uid://bkklrtdf1aroc" path="res://test.gd" id="1_m0j2f"]
+[ext_resource type="Texture2D" uid="uid://dfogsshx44v6" path="res://icon.png" id="2_sysjo"]
 [ext_resource type="PackedScene" uid="uid://mj02c62c72tl" path="res://Funkin/Game/StrumLine.tscn" id="3_0dqgn"]
 
 [node name="TestMain" type="Node2D"]
 script = ExtResource("1_m0j2f")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="Icon" type="Sprite2D" parent="UILayer"]
+position = Vector2(479, 425)
+texture = ExtResource("2_sysjo")
 
 [node name="StrumLine" parent="." instance=ExtResource("3_0dqgn")]
 position = Vector2(640, 75)
