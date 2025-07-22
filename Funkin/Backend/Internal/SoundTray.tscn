@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://mfeb0xxcwdnm"]
+
+[sub_resource type="Resource" id="Resource_kiync"]
+metadata/__load_path__ = "res://scripts/SoundTray.gd"
+
+[sub_resource type="Theme" id="Theme_0go3i"]
+
+[node name="SoundTray" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(576, 324)
+enabled = false
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Camera2D"]
+script = SubResource("Resource_kiync")
+
+[node name="Panel" type="Panel" parent="Camera2D/CanvasLayer"]
+offset_left = 1177.0
+offset_top = 580.0
+offset_right = 1498.0
+offset_bottom = 620.0
+theme = SubResource("Theme_0go3i")
+
+[node name="Volume" type="ProgressBar" parent="Camera2D/CanvasLayer/Panel"]
+layout_direction = 2
+layout_mode = 0
+offset_left = 20.0
+offset_top = 7.0
+offset_right = 303.0
+offset_bottom = 34.0
+tooltip_text = "Volume"
+show_percentage = false
+
+[node name="Timer" type="Timer" parent="Camera2D/CanvasLayer"]
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="Camera2D/CanvasLayer/Timer" to="Camera2D/CanvasLayer" method="_on_timer_timeout"]
