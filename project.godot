@@ -33,7 +33,8 @@ folder_colors={
 "res://Assets/Songs/": "gray",
 "res://Funkin/": "green",
 "res://Funkin/Backend/": "orange",
-"res://Funkin/Game/": "blue"
+"res://Funkin/Game/": "blue",
+"res://Funkin/Scenes/": "pink"
 }
 
 [input]
