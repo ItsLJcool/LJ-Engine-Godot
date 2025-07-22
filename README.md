@@ -35,7 +35,7 @@ Here is all that I have gotten to work so far:
 And that's really for for now.
 
 ## Please go read the TODO.md file.
-It has a list of things needing to be done.
+[It has a list of things needing to be done.](./TODO.md)
 
 ## Special Thanks
 - Aliza - For the `Conductor.gd` Script
