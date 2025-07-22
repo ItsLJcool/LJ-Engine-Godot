@@ -2,6 +2,8 @@
 # We can make Custom Loading Screens, UI Elements, Utilities, etc.
 class_name FunkinGame extends Node
 
+static var instance:FunkinGame
+
 # lemme double check cuz I think im lying to myself
 # I was right 🔥
 @onready var UI_LAYER:CanvasLayer = $UILayer ## This will be your UI Layer. Moving the camera will not affect objects on this layer.
@@ -29,6 +31,7 @@ func loop_for_ui(fiction:Callable): for node in UI_LAYER.get_children(): fiction
 const STARTING_SCENE := preload("res://Funkin/Scenes/MainTesting.tscn")
 
 func _ready():
+	instance = self
 	# So the camera is always in the center on start-up no matter what
 	camera.position = window.size * 0.5
 	

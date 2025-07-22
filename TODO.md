@@ -5,6 +5,7 @@
 - [x] Add FPS Counter, PC Specs, and other useful information.
 
 - [ ] UI For `ImagesToSpriteFrames` Scene
+  - [ ] Figure out why the fuck a basic Character sheet is 1gb in size.
 
 - [ ] Possibly rework file structure
 

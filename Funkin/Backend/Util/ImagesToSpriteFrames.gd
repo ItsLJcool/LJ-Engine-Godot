@@ -1,7 +1,7 @@
 extends Node2D
 
 func _ready() -> void:
-	create_spriteframes_from_xml("res://Assets/Notes/default/static")
+	create_spriteframes_from_xml("res://Assets/Characters/bf")
 
 # Remove trailing digits from the frame name
 func get_base_anim_name(animName: String) -> String:

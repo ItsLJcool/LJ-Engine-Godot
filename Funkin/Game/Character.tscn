@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://hvr7hgtgl5rf"]
+
+[ext_resource type="Script" uid="uid://blop6ktg2hjmp" path="res://Funkin/Game/Character.gd" id="1_5wgne"]
+
+[node name="Character" type="AnimatedSprite2D"]
+script = ExtResource("1_5wgne")
