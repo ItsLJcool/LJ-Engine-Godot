@@ -8,9 +8,7 @@ script = ExtResource("1_m0j2f")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="Player" parent="UILayer" instance=ExtResource("3_0dqgn")]
-position = Vector2(1035.2, 75)
-StrumLinePos = 0.975
+[node name="StrumLine" parent="." instance=ExtResource("3_0dqgn")]
+position = Vector2(640, 75)
+StrumLinePos = 0.5
 isPlayer = true
-
-[node name="Cpu" parent="UILayer" instance=ExtResource("3_0dqgn")]

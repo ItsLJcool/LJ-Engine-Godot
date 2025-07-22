@@ -45,12 +45,12 @@ func switch_state(packed:PackedScene)->bool:
 	loop_for_game(func(node:Node): node.queue_free())
 	loop_for_ui(func(node:Node): node.queue_free())
 	
+	add(new_scene)
+	
 	# If the scene has a Layer the same name as our UILayer, then reparent them to this state's UILayer for formality
 	var uiLayer:CanvasLayer = new_scene.get_node_or_null('%s' % UI_LAYER.name)
 	if uiLayer:
 		for node in uiLayer.get_children(): node.reparent(UI_LAYER)
 		uiLayer.queue_free()
-	
-	for node in new_scene.get_children(): node.reparent(GAME_LAYER)
 	
 	return true

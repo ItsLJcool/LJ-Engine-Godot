@@ -1,29 +1,30 @@
 @tool
 ## Container of your Strum class and extra information with it.
 class_name StrumLine extends Node2D
+
 #region Init Variables
 
-@onready var strumsGroup:Node2D = $Strums
+@onready var strumsGroup:Node2D = $Strums ## Node2D that contains your Strum instances. Wow so cool at not using arrays!!
 
-## Maximum Value of your Strums in a container, somewhat of a Multikey support.
-const MAX_STRUMS:int = 4
+const MAX_STRUMS:int = 4 ## Maximum Value of your Strums in a container, somewhat of a Multikey support.
 
+# also yes I know it should be 0.25 is left and 0.75 is right but I suck at math. pls fix later
 ## Idea taken from CodenameEngine. 0.025 is Left. 0.975 is Right. 0 and 1 toutch the edge of the window.
 @export_range(0, 1) var StrumLinePos:float = 0.025:
 	set(value):
 		StrumLinePos = value
-		update_strums(false)
+		refresh_strums(false)
 
-@export_range(1, MAX_STRUMS+1) var StrumsAmount:int = 4:
+@export_range(1, MAX_STRUMS+1) var StrumsAmount:int = 4: ## Your Strum Count. Somewhat of a Multikey Support. DOESN'T WORK RIGHT NOW!!
 	set(value):
 		if (value > MAX_STRUMS): value = MAX_STRUMS
 		StrumsAmount = value
-		update_strums()
+		refresh_strums()
 
-@export var padding:float = 112:
+@export var padding:float = 112: ## Padding between each Strum
 	set(value):
 		padding = value
-		update_strums(false)
+		refresh_strums(false)
 
 ## Blueprint to spawn new strums
 const strum_blueprint := preload("res://Funkin/Game/Strum.tscn")
@@ -34,10 +35,10 @@ const strum_blueprint := preload("res://Funkin/Game/Strum.tscn")
 #endregion
 
 func _ready()->void:
-	print()
-	update_strums(true)
+	refresh_strums(true)
 	self.position.y = 75
 
+## Adds a note and initalizes it into the Corresponding Strum Direction
 func add_note(directon:Strum.NoteDirection, time:float, susLength:float)->void:
 	var strum:Strum = strumsGroup.get_children()[directon]
 	if !strum: return
@@ -49,7 +50,7 @@ func _process(_delta: float) -> void:
 		loop_for_strums(func(strum:Strum): strum.on_input() )
 	
 
-func update_strums(_queue_free:bool = false)->void:
+func refresh_strums(_queue_free:bool = false)->void: ## Re-evaluates positional data, and if needed to, destroy's the strums and reinitalizes them.
 	if !strumsGroup: return
 	if _queue_free:
 		for i in strumsGroup.get_children(): i.queue_free()
@@ -68,7 +69,7 @@ func update_strums(_queue_free:bool = false)->void:
 	self.global_position.x = lerpf(offset, (1280 - offset), StrumLinePos)
 	for i in strumsGroup.get_children(): i.position.x = (((padding) * i.direction) + (padding * 0.5)) - offset
 
-func loop_for_strums(fiction:Callable) -> void:
-	for i in strumsGroup.get_children():
+func loop_for_strums(fiction:Callable) -> void: ## Basic Util for looping through each Strum
+	for i:Strum in strumsGroup.get_children():
 		if !i is Strum: continue
 		fiction.call(i)

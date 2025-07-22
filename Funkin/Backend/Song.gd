@@ -1,52 +1,62 @@
+## Quick Utility Class for Parsing and Playing Songs.
 class_name Song extends Node
 
-# Probably remake this class
+var vocal_player:AudioStreamPlayer = AudioStreamPlayer.new() ## Audio Steam for the Vocals
 
-var vocal_player:AudioStreamPlayer = AudioStreamPlayer.new()
+var isReady:bool = false; ## If the Class is ready to play the song.
 
-var isReady:bool = false;
+static var songsPath:String = &"res://Assets/Songs" ## Path for the Songs Folder
 
-static var songsPath:String = &"res://Assets/Songs"
-
-func _ready():
+func _ready()->void:
 	Conductor.song_start.connect(start)
 	add_child(vocal_player)
 
-func init(songName:String):
+func init(songName:String, difficulty:String = "")->void: ## Initalizes the Vocals and Conductor with your song name
 	isReady = false
 	Conductor.reset()
 	
-	vocal_player.stream = load("%s/%s/song/Voices.ogg" % [songsPath, songName])
+	vocal_player.stream = load("%s/%s/song/Voices%s.ogg" % [songsPath, songName, difficulty])
 	vocal_player.name = "SongPlayer"
 	vocal_player.bus = "Music"
 	
-	Conductor.audio_stream = load("%s/%s/song/Inst.ogg" % [songsPath, songName])
+	Conductor.audio_stream = load("%s/%s/song/Inst%s.ogg" % [songsPath, songName, difficulty])
 	isReady = true
 
-func start():
+func start()->void: ## Starts the song. Somewhat Internal
 	if !isReady: return
 	
 	vocal_player.play()
 	Conductor.play();
 	
-func pause():
+func pause(): ## Pauses the Audio
 	Conductor.pause()
+	vocal_player.stream_paused = true
 
-func resume():
+func resume(): ## Resumes the Audio
 	Conductor.resume()
+	vocal_player.stream_paused = false
 
 # Chart Parsing
-static func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array[StrumLine] = [])->void:
+
+## Reusable Parsing Json
+static func parseJson(songName:String, difficulty:String = "normal")->Dictionary:
 	var filePath = "%s/%s/charts/%s.json" % [songsPath, songName, difficulty]
 	if (!FileAccess.file_exists(filePath)):
 		print("Path doesn't exist: ", filePath)
-		return
+		return {}
 	
 	var jsonString = FileAccess.open(filePath, FileAccess.READ)
 	var json = JSON.parse_string(jsonString.get_as_text())
 	if (!json is Dictionary):
 		print("Error reading file")
-		return
+		return {}
+	
+	return json
+
+## Parses your CodenameEngine JSON. Returns True if successful
+static func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array[StrumLine] = [])->bool:
+	var json = parseJson(songName, difficulty)
+	if json == {}: return false
 	
 	var jsonStrumLine = json.strumLines
 	for idx in range(0, strumLines.size()):
@@ -59,3 +69,5 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 		
 		for note in notes:
 			strumline.add_note(note.id, note.time, note.sLen)
+	
+	return true

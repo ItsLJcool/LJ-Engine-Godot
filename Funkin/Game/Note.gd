@@ -1,16 +1,16 @@
 class_name Note extends Node2D
 
 #region Initalize Variable Names
-@onready var sprite:AnimatedSprite2D = $Sprite
-@onready var sustain:Line2D = $Sustain
-@onready var clipRect:Control = $Sustain/ClipRect
-@onready var end:Sprite2D = $Sustain/ClipRect/End
 
-var sustainsPath:String = "res://Assets/Notes/%s/sustains/%s-sustain.png"
-var endPath:String = "res://Assets/Notes/%s/sustains/%s-end.png"
+@onready var sprite:AnimatedSprite2D = $Sprite ## The "Note" Sprite Itself. Not the Root Class for independent rotations.
+@onready var sustain:Line2D = $Sustain ## Your Sustain. Instead of like 5 billion seperate images 🔥
+@onready var clipRect:Control = $Sustain/ClipRect ## Used for clipping the end Sprite2D when hitting the full sustain
+@onready var end:Sprite2D = $Sustain/ClipRect/End ## The end tail piece
 
-## The Note's bounded Strum
-var strum:Strum
+var sustainsPath:String = "res://Assets/Notes/%s/sustains/%s-sustain.png" ## Path for your sustain Images. use %s for the direction name
+var endPath:String = "res://Assets/Notes/%s/sustains/%s-end.png" ## Path for your end Images. use %s for the direction name
+
+var strum:Strum ## The Note's bounded Strum
 
 #endregion
 
@@ -19,36 +19,37 @@ var strum:Strum
 ## If things like updating the note should occur. Internal variable used by Strum.gd
 var render:bool = false
 
-var isSustainNote:bool = true
+var isSustainNote:bool = true ## If the note is considered to have a Sustain and a tail.
 
-var susLength:float = 200:
+var susLength:float = 200: ## The length of the sustain.
 	set(value):
 		if susLength <= 0.0: isSustainNote = false
 		susLength = abs(value)
 		if sustain and end:
+			sustain.visible = isSustainNote
+			end.visible = isSustainNote
+			
 			sustain.set_point_position(sustain.get_point_count()-1, Vector2(0, value))
 			end.flip_v = true if value < 0 else false
 			end.flip_h = end.flip_v
 			end.position = sustain.position
 			end.position.y += value
 
-var strumTime:float = 3000
+var strumTime:float = 3000 ## The time in MS when the note should be hit
 
-var earlyPressWindow:float = 0.5
-var latePressWindow:float = 1
+var earlyPressWindow:float = 0.5 ## Placeholder Information. I have no clue what this does
+var latePressWindow:float = 1 ## Placeholder Information. I have no clue what this does
 
-var canBeHit:bool = false
-var tooLate:bool = false
-var wasGoodHit:bool = false
+var canBeHit:bool = false ## If the note can be hit when in range of the Static Strum
+var tooLate:bool = false ## If the note was too late to be hit
+var wasGoodHit:bool = false ## If the note was hit
 
-## Honestly I have no fucking clue what this does beside increase the- oh wait right its in the name
-var hitWindow:float = 160;
+var hitWindow:float = 160; ## Time im MS of the window you have to hit the note
 
-## If you should NOT hit the note and avoid it.
-var avoid:bool = false;
+var avoid:bool = false; ## If true, hitting the note counts as a miss
 #endregion
 
-func init(_strum:Strum, time:float, sustainLength:float)->void:
+func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing the Note to be used
 	self.visible = false
 	
 	strum = _strum
@@ -69,10 +70,10 @@ func _ready():
 	if (!Engine.is_editor_hint()): clipRect.clip_contents = true;
 	self.position.y = -5000
 	
-func deleteNote():
+func deleteNote(): ## Simply just destroys the note
 	self.queue_free()
 
-func goodNoteHit():
+func goodNoteHit()->void: ## Called when you hit the note properly
 	wasGoodHit = true
 	strum.hitNote = true
 	
@@ -84,12 +85,16 @@ func goodNoteHit():
 	if !isSustainNote: deleteNote()
 	else: sprite.self_modulate.a = 0
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if !render: return
 	update_note()
 
-func update_note():
-	self.position.y = (strumTime - Conductor.song_position) * (0.45 * (int(strum.scrollSpeed * 100) / 100) )
+# Ok reference to everyone here:
+# Hitting a sustain like normal but releasing it early should cause it to never be hittable again.
+# Thats how I want the engine to handle sustains.
+func update_note()->void: ## Call this to update position progression, and if the note should be hittable
+	@warning_ignore("integer_division")
+	self.position.y = (strumTime - Conductor.song_position) * (0.6 * (int(strum.scrollSpeed * 100) / 100) )
 	
 	canBeHit = ((strumTime + susLength) > Conductor.song_position - (hitWindow * latePressWindow)
 		and strumTime < Conductor.song_position + (hitWindow * earlyPressWindow))
@@ -108,34 +113,30 @@ func update_note():
 		deleteNote()
 		return
 	
-	updateSustain()
+	if isSustainNote: update_sustain()
 
-
-func updateSustain():
-	var lastPoint = sustain.get_point_position(sustain.get_point_count()-1)
-	var _endSize = end.texture
+func update_sustain()->void: ## Updates the Length of the sustain when hitting or not hitting.
+	var lastPoint := sustain.get_point_position(sustain.get_point_count()-1)
 	
-	var lengthPog = (0.45 * round(strum.scrollSpeed * 100) / 100);
-	var yVal = 0;
+	var lengthPog:float = (0.45 * round(strum.scrollSpeed * 100) / 100);
+	var yVal:float = 0.0;
 	if wasGoodHit:
 		yVal = ((susLength + (strumTime - Conductor.song_position)) * lengthPog);
-		
 		sustain.position.y = -(position.y - strum.position.y);
 	else:
 		yVal = (susLength * lengthPog);
-		
 		sustain.position.y = 0;
 	
-	yVal -= _endSize.get_height();
+	yVal -= end.texture.get_height();
 	
 	lastPoint.y = yVal;
 	lastPoint.y = max(lastPoint.y, 0)
 	
 	sustain.set_point_position(sustain.get_point_count()-1, lastPoint);
 	
-	clipRect.position.x = -(_endSize.get_width() * 0.5);
-	clipRect.size.x = _endSize.get_width();
-	clipRect.size.y = yVal + _endSize.get_height();
+	clipRect.position.x = -(end.texture.get_width() * 0.5);
+	clipRect.size.x = end.texture.get_width();
+	clipRect.size.y = yVal + end.texture.get_height();
 	
-	end.position.x = _endSize.get_width() * 0.5;
+	end.position.x = end.texture.get_width() * 0.5;
 	end.position.y = yVal;
