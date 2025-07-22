@@ -3,6 +3,13 @@ extends Node2D
 func _ready() -> void:
 	create_spriteframes_from_xml("res://Assets/Characters/bf")
 
+
+
+
+
+
+
+
 # Remove trailing digits from the frame name
 func get_base_anim_name(animName: String) -> String:
 	var i = animName.length() - 1
@@ -10,10 +17,10 @@ func get_base_anim_name(animName: String) -> String:
 	return animName.substr(0, i + 1)
 
 func create_spriteframes_from_xml(imageXmlPath:String)->void:
-	var xmlPath = "%s.xml" % imageXmlPath
-	var pngPath = "%s.png" % imageXmlPath
+	var xmlPath:String = "%s.xml" % imageXmlPath
+	var pngPath:String = "%s.png" % imageXmlPath
 	
-	var base_image := Image.load_from_file(pngPath)
+	var base_image:Texture2D = load(pngPath)
 	if base_image == null:
 		push_error("Failed to load image.")
 		return
@@ -28,9 +35,10 @@ func create_spriteframes_from_xml(imageXmlPath:String)->void:
 	while xml.read() == OK:
 		if xml.get_node_type() == XMLParser.NODE_ELEMENT and xml.get_node_name() == "SubTexture":
 			var xmlName:String = xml.get_named_attribute_value("name")
-			var isRotated:bool = false
-			# No boolean casting for strings yet rip
-			if (xml.has_attribute("rotated")): isRotated = true if xml.get_named_attribute_value("rotated") == "true" else false
+			
+			# Interesting... weird chatGPT code
+			var isRotated:bool = xml.has_attribute("rotated") and xml.get_named_attribute_value("rotated").to_int() in ["true", 1]
+			
 			var x:int = xml.get_named_attribute_value("x").to_int()
 			var y:int = xml.get_named_attribute_value("y").to_int()
 			
@@ -51,14 +59,14 @@ func create_spriteframes_from_xml(imageXmlPath:String)->void:
 			if !animations.has(anim_name): animations[anim_name] = []
 			animations[anim_name].append({
 				"rect": Rect2i(x, y, w, h),
-				"frame": Rect2i(frameX, frameY, frameWidth, frameHeight),
+				"frame": Rect2i(-frameX, -frameY, (frameWidth - w) - frameX, (frameHeight - h) - frameY),
 				"isRotated": isRotated
 			})
 	
 	var sprite_frames := SpriteFrames.new()
 	sprite_frames.remove_animation("default")
 	
-	var texture_cache := {}  # Rect2 string => ImageTexture
+	var texture_cache := {}  # Rect2 string => AtlasTexture
 	for anim in animations.keys():
 		sprite_frames.add_animation(anim)
 		sprite_frames.set_animation_speed(anim, 24)
@@ -67,30 +75,21 @@ func create_spriteframes_from_xml(imageXmlPath:String)->void:
 		for data in animations[anim]:
 			var rect = data.rect
 			var frame = data.frame
-			var rect_key := "%d,%d,%d,%d" % [rect.position.x, rect.position.y, rect.size.x, rect.size.y]
+			var rect_key:String = "%d,%d,%d,%d" % [rect.position.x, rect.position.y, rect.size.x, rect.size.y]
 			
-			var tex:ImageTexture
-			if texture_cache.has(rect_key): tex = texture_cache[rect_key]
+			var animTexture:AtlasTexture
+			if texture_cache.has(rect_key): animTexture = texture_cache[rect_key]
 			else:
-				tex = crop_with_offset(base_image, rect, frame, data.isRotated)
-				texture_cache[rect_key] = tex
+				animTexture = AtlasTexture.new()
+				animTexture.atlas = base_image
+				animTexture.filter_clip = true
+				animTexture.region = rect
+				animTexture.margin = frame
+				texture_cache[rect_key] = animTexture
 			
-			sprite_frames.add_frame(anim, tex)
+			sprite_frames.add_frame(anim, animTexture)
 	
 	
 	var output_path:String = "%s.tres" % imageXmlPath
 	ResourceSaver.save(sprite_frames, output_path)
 	print("Saved to: ", output_path)
-
-# I think what needs to be done is get the largest rect size in the animation, and offset based on size difference??
-# literally so confused tho
-func crop_with_offset(base_image:Image, crop_rect:Rect2i, frame:Rect2i, rotated:bool = false) -> ImageTexture:
-	var new_size:Vector2i = Vector2i(crop_rect.size) + frame.position.abs()
-	var dist:Vector2i = Vector2i(max(0, frame.position.x), max(0, frame.position.y))
-	
-	var padded:Image = Image.create_empty(new_size.x, new_size.y, false, Image.FORMAT_RGBA8)
-	padded.blit_rect(base_image.get_region(crop_rect), Rect2i(Vector2i.ZERO, crop_rect.size), dist)
-	
-	if rotated: padded.rotate_90(COUNTERCLOCKWISE)
-	
-	return ImageTexture.create_from_image(padded)

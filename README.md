@@ -40,4 +40,7 @@ It has a list of things needing to be done.
 ## Special Thanks
 - Aliza - For the `Conductor.gd` Script
 - theo - For helping with some of the `NotePath` information (Currently going forth without using custom pathing for notes. Need to keep the scope a bit low)
+- Swordcube - Helped make the original code that I reused in this project for Updating Sustains
 - Nova - Helping out with the Repository
+- Srt - Helped out with XML to SpriteFrames
+- TheZoroForce240 - Helped out with XML to SpriteFrames
