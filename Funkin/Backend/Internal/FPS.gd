@@ -12,11 +12,8 @@ func _process(delta:float):
 	var texMem = Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)
 	var realMem = Performance.get_monitor(Performance.MEMORY_STATIC)
 	
-	var engine_info = Engine.get_version_info()
-	var engine_string = "v%s.%s.%s - %s (%s)" % [engine_info.major, engine_info.minor, engine_info.patch, engine_info.status, engine_info.build]
-	
 	self.text = (textDisplay %
-	[fps, String.humanize_size(texMem), String.humanize_size(realMem), engine_string] )
+	[fps, String.humanize_size(texMem), String.humanize_size(realMem), Engine.get_version_info().string] )
 	
 	var current_color:Color = normal_color
 	
