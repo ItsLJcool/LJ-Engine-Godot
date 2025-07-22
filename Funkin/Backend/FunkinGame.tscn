@@ -11,3 +11,5 @@ position = Vector2(640, 360)
 [node name="Game" type="Node2D" parent="."]
 
 [node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="FPS" type="CanvasLayer" parent="."]
