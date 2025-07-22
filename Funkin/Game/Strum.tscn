@@ -12,7 +12,6 @@ editor_description = "Your physical sprite you can move around without affecting
 sprite_frames = ExtResource("1_c4yec")
 animation = &"left-static"
 autoplay = "left-static"
-frame_progress = 1.0
 
 [node name="Notes" type="Node2D" parent="."]
 editor_description = "The container of your `Notes` for this `Strum`"
