@@ -15,7 +15,7 @@
 - [x] Add Characters
   - [ ] Make character dance on beat, and singing animations based off of V-Slice
   - [ ] Animation Offsets
-  
+
 - [ ] Possibly rework file structure
 
 - [ ] Rework how `Songs` are loaded and handled for parsing charts and playing songs.
@@ -38,6 +38,8 @@
 ### Others
 
 - [x] Scene that manages switching between other states, UI, Camera, etc. *(FunkinGame.gd)*
+  - [ ] Add Transitions that are customizable
+  - [ ] Find out how to reflect variables onto another Script before it exists??? (i.e access `Camera` from `FunkinGame.gd` in `MainTesting.gd`)
 
 - [ ] Re-implement `NotePath` for custom note pathing.
 
