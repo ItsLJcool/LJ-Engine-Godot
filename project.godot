@@ -14,7 +14,7 @@ config/name="LJ Engine Godot"
 config/description="Fnf Engine made easy in Godot!"
 config/version="0.0.1"
 run/main_scene="uid://dwwj0wky3eraf"
-config/features=PackedStringArray("4.4")
+config/features=PackedStringArray("4.4", "C#")
 config/icon="res://icon.png"
 
 [autoload]
@@ -27,6 +27,10 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="viewport"
 window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="LJ Engine Godot"
 
 [file_customization]
 

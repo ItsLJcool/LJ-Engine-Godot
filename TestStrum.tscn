@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://c6aoqanqepuxx"]
+
+[ext_resource type="Script" uid="uid://ddxgalyyi1enj" path="res://TestStrum.cs" id="1_aqp6i"]
+[ext_resource type="SpriteFrames" uid="uid://dpbuuyqrfrk32" path="res://Assets/Notes/default/static.tres" id="2_ygei2"]
+
+[node name="Strum" type="Node2D"]
+script = ExtResource("1_aqp6i")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+editor_description = "Your physical sprite you can move around without affecting the actual Node"
+sprite_frames = ExtResource("2_ygei2")
+animation = &"left-static"
+autoplay = "left-static"
+frame_progress = 1.0
+
+[node name="Notes" type="Node2D" parent="."]
+editor_description = "The container of your `Notes` for this `Strum`"
