@@ -1,12 +1,21 @@
 # LJ Engine - Godot | Todo List
 
+## Fix Issues
+*none for now*
+
 ### Basic Features
 
 - [x] Add FPS Counter, PC Specs, and other useful information.
 
 - [ ] UI For `ImagesToSpriteFrames` Scene
   - [x] Figure out why the fuck a basic Character sheet is 1gb in size.
+  - [ ] Somehow support Rotated Sprites
+  - [ ] Add support for Animated Atlases?
 
+- [x] Add Characters
+  - [ ] Make character dance on beat, and singing animations based off of V-Slice
+  - [ ] Animation Offsets
+  
 - [ ] Possibly rework file structure
 
 - [ ] Rework how `Songs` are loaded and handled for parsing charts and playing songs.

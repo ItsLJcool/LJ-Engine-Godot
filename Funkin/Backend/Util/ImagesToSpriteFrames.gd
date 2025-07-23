@@ -1,72 +1,122 @@
 extends Node2D
 
+# TODO: turn this into the Character Editor??
+
 func _ready() -> void:
-	create_spriteframes_from_xml("res://Assets/Characters/bf")
+	create_spriteframes_from_xml("res://Assets/Notes/default/static")
+	pass
 
-
-
-
-
-
-
-
-# Remove trailing digits from the frame name
+## Removes any trailing numbers with index. example: idle0001 -> idle
 func get_base_anim_name(animName: String) -> String:
 	var i = animName.length() - 1
 	while i >= 0 and animName[i].is_valid_int(): i -= 1
 	return animName.substr(0, i + 1)
 
-func create_spriteframes_from_xml(imageXmlPath:String)->void:
-	var xmlPath:String = "%s.xml" % imageXmlPath
-	var pngPath:String = "%s.png" % imageXmlPath
+func get_xml_animations(xml_path:String)->Dictionary:
+	var animations:Dictionary = {}
 	
-	var base_image:Texture2D = load(pngPath)
+	var xml = XMLParser.new()
+	var error = xml.open(xml_path)
+	if error != OK:
+		push_error("Failed to open XML file: %s" % xml_path)
+		return animations
+	
+	while xml.read() == OK:
+		if !(xml.get_node_type() == XMLParser.NODE_ELEMENT and xml.get_node_name() == "SubTexture"): continue
+		var xmlName:String = xml.get_named_attribute_value("name")
+		
+		var isRotated:bool = false
+		if xml.has_attribute("rotated"): isRotated = true if xml.get_named_attribute_value("rotated") == "true" else false
+		
+		var x:int = xml.get_named_attribute_value("x").to_int()
+		var y:int = xml.get_named_attribute_value("y").to_int()
+		
+		var w:int = xml.get_named_attribute_value("width").to_int()
+		var h:int = xml.get_named_attribute_value("height").to_int()
+		
+		var frameWidth:int = w
+		var frameHeight:int = h
+		if xml.has_attribute("frameWidth"): frameWidth = xml.get_named_attribute_value("frameWidth").to_int()
+		if xml.has_attribute("frameHeight"): frameHeight = xml.get_named_attribute_value("frameHeight").to_int()
+		
+		var frameX:int = 0
+		var frameY:int = 0
+		if xml.has_attribute("frameX"): frameX = xml.get_named_attribute_value("frameX").to_int()
+		if xml.has_attribute("frameY"): frameY = xml.get_named_attribute_value("frameY").to_int()
+		
+		var anim_name:String = get_base_anim_name(xmlName)
+		if !animations.has(anim_name): animations[anim_name] = []
+		animations[anim_name].append({
+			"rect": Rect2i(x, y, w, h),
+			"frame": Rect2i(-frameX, -frameY, (frameWidth - w) - frameX, (frameHeight - h) - frameY),
+			"isRotated": isRotated
+		})
+	
+	return animations
+
+func get_xml_animation_by_name(xml_path:String, anim_name:String):
+	var animation:Dictionary = {}
+	
+	var xml = XMLParser.new()
+	var error = xml.open(xml_path)
+	if error != OK:
+		push_error("Failed to open XML file: %s" % xml_path)
+		return animation
+	
+	while xml.read() == OK:
+		if !(xml.get_node_type() == XMLParser.NODE_ELEMENT and xml.get_node_name() == "SubTexture"): continue
+		var xml_anim:String = get_base_anim_name(xml.get_named_attribute_value("name"))
+		if xml_anim != anim_name: continue
+		
+		var isRotated:bool = false
+		if xml.has_attribute("rotated"): isRotated = true if xml.get_named_attribute_value("rotated") == "true" else false
+		
+		var x:int = xml.get_named_attribute_value("x").to_int()
+		var y:int = xml.get_named_attribute_value("y").to_int()
+		
+		var w:int = xml.get_named_attribute_value("width").to_int()
+		var h:int = xml.get_named_attribute_value("height").to_int()
+		
+		var frameWidth:int = w
+		var frameHeight:int = h
+		if xml.has_attribute("frameWidth"): frameWidth = xml.get_named_attribute_value("frameWidth").to_int()
+		if xml.has_attribute("frameHeight"): frameHeight = xml.get_named_attribute_value("frameHeight").to_int()
+		
+		var frameX:int = 0
+		var frameY:int = 0
+		if xml.has_attribute("frameX"): frameX = xml.get_named_attribute_value("frameX").to_int()
+		if xml.has_attribute("frameY"): frameY = xml.get_named_attribute_value("frameY").to_int()
+		
+		if !animation.has(anim_name): animation[anim_name] = []
+		animation[anim_name].append({
+			"rect": Rect2i(x, y, w, h),
+			"frame": Rect2i(-frameX, -frameY, (frameWidth - w) - frameX, (frameHeight - h) - frameY),
+			"isRotated": isRotated
+		})
+	
+	return animation
+
+func create_spriteframes_from_xml(path:String)->void:
+	var xml_path:String = "%s.xml" % path
+	var png_path:String = "%s.png" % path
+	
+	var base_image:Texture2D = load(png_path)
 	if base_image == null:
 		push_error("Failed to load image.")
 		return
 	
 	var xml = XMLParser.new()
-	var error = xml.open(xmlPath)
+	var error = xml.open(xml_path)
 	if error != OK:
-		push_error("Failed to open XML file: %s" % xmlPath)
+		push_error("Failed to open XML file: %s" % xml_path)
 		return
 	
-	var animations := {}
-	while xml.read() == OK:
-		if xml.get_node_type() == XMLParser.NODE_ELEMENT and xml.get_node_name() == "SubTexture":
-			var xmlName:String = xml.get_named_attribute_value("name")
-			
-			# Interesting... weird chatGPT code
-			var isRotated:bool = xml.has_attribute("rotated") and xml.get_named_attribute_value("rotated").to_int() in ["true", 1]
-			
-			var x:int = xml.get_named_attribute_value("x").to_int()
-			var y:int = xml.get_named_attribute_value("y").to_int()
-			
-			var w:int = xml.get_named_attribute_value("width").to_int()
-			var h:int = xml.get_named_attribute_value("height").to_int()
-			
-			var frameWidth:int = w
-			var frameHeight:int = h
-			if xml.has_attribute("frameWidth"): frameWidth = xml.get_named_attribute_value("frameWidth").to_int()
-			if xml.has_attribute("frameHeight"): frameHeight = xml.get_named_attribute_value("frameHeight").to_int()
-			
-			var frameX:int = 0
-			var frameY:int = 0
-			if xml.has_attribute("frameX"): frameX = xml.get_named_attribute_value("frameX").to_int()
-			if xml.has_attribute("frameY"): frameY = xml.get_named_attribute_value("frameY").to_int()
-			
-			var anim_name:String = get_base_anim_name(xmlName)
-			if !animations.has(anim_name): animations[anim_name] = []
-			animations[anim_name].append({
-				"rect": Rect2i(x, y, w, h),
-				"frame": Rect2i(-frameX, -frameY, (frameWidth - w) - frameX, (frameHeight - h) - frameY),
-				"isRotated": isRotated
-			})
-	
-	var sprite_frames := SpriteFrames.new()
+	var animations:Dictionary = get_xml_animations(xml_path)
+	var sprite_frames:SpriteFrames = SpriteFrames.new()
 	sprite_frames.remove_animation("default")
 	
-	var texture_cache := {}  # Rect2 string => AtlasTexture
+	# Rect2 string => AtlasTexture
+	var texture_cache:Dictionary = {}
 	for anim in animations.keys():
 		sprite_frames.add_animation(anim)
 		sprite_frames.set_animation_speed(anim, 24)
@@ -90,6 +140,6 @@ func create_spriteframes_from_xml(imageXmlPath:String)->void:
 			sprite_frames.add_frame(anim, animTexture)
 	
 	
-	var output_path:String = "%s.tres" % imageXmlPath
+	var output_path:String = "%s.tres" % path
 	ResourceSaver.save(sprite_frames, output_path)
 	print("Saved to: ", output_path)

@@ -2,8 +2,6 @@
 ## A single Strum that builds a StrumLine. Contains all the Notes that you press on this Strum
 class_name Strum extends Node2D
 
-signal onInput(direction:NoteDirection, input:InputType) ## Emits a signal for various Key Inputs
-
 @onready var sprite:AnimatedSprite2D = $Sprite ## The "Strum"'s Sprite itself.
 @onready var notesGroup:Node2D = $Notes ## A Node2D containing all the notes in the song. Better than an array!
 
@@ -44,13 +42,6 @@ enum NoteDirection {
  	UP = 2,
 	RIGHT = 3,
 }
-
-enum InputType {
-	Press,
-	Release,
-	JustPressed,
-	JustReleased
-}
 #endregion
 
 func _ready():
@@ -81,32 +72,6 @@ func loop_for_notes(fiction:Callable) -> void: ## Simple utility function to qui
 	for i:Note in notesGroup.get_children():
 		if !i is Note: continue
 		fiction.call(i)
-
-## Input Handler
-func on_input()->void:
-	if Engine.is_editor_hint(): return
-	var dir = direction_to_string(direction)
-	var action = INPUT_NAME % dir
-	
-	if Input.is_action_just_pressed(action):
-		onInput.emit(direction, InputType.JustPressed)
-	
-	if Input.is_action_pressed(action):
-		process_pressed()
-	
-	if Input.is_action_just_released(action):
-		sprite.play("%s%s" % [dir, _static])
-		hitNote = false
-		onInput.emit(direction, InputType.JustReleased)
-
-func process_pressed()->void: ## When your activly pressing down on a key. Internal Function
-	var anim = "%s%s" % [direction_to_string(direction), (confirm if hitNote else press)]
-	
-	if sprite.animation != anim: sprite.play(anim)
-	
-	onInput.emit(direction, InputType.Press)
-	
-	loop_for_notes(func(note:Note): if note.canBeHit and !note.wasGoodHit: note.goodNoteHit() )
 
 # Now we take the time to render
 func _process(_delta: float) -> void:

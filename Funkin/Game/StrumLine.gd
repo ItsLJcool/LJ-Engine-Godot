@@ -2,6 +2,15 @@
 ## Container of your Strum class and extra information with it.
 class_name StrumLine extends Node2D
 
+signal onInput(direction:Strum.NoteDirection, input:InputType) ## Emits a signal for various Key Inputs
+
+enum InputType {
+	Press,
+	Release,
+	JustPressed,
+	JustReleased
+}
+
 #region Init Variables
 
 @onready var strumsGroup:Node2D = $Strums ## Node2D that contains your Strum instances. Wow so cool at not using arrays!!
@@ -47,8 +56,7 @@ func add_note(dir:Strum.NoteDirection, time:float, susLength:float)->void:
 func _process(_delta: float) -> void:
 	
 	if isPlayer:
-		loop_for_strums(func(strum:Strum): strum.on_input() )
-	
+		loop_for_strums(func(strum:Strum): on_input(strum))
 
 func refresh_strums(_queue_free:bool = false)->void: ## Re-evaluates positional data, and if needed to, destroy's the strums and reinitalizes them.
 	if !strumsGroup: return
@@ -73,3 +81,43 @@ func loop_for_strums(fiction:Callable) -> void: ## Basic Util for looping throug
 	for i:Strum in strumsGroup.get_children():
 		if !i is Strum: continue
 		fiction.call(i)
+
+
+func on_input(strum:Strum)->void:
+	if Engine.is_editor_hint(): return
+	var dir = Strum.direction_to_string(strum.direction)
+	var action = strum.INPUT_NAME % dir
+	
+	if Input.is_action_just_pressed(action):
+		strum.loop_for_notes(func(note:Note): if note.canBeHit and !note.wasGoodHit: note.goodNoteHit() )
+		
+		onInput.emit(strum.direction, InputType.JustPressed)
+	
+	if Input.is_action_pressed(action):
+		var anim = "%s%s" % [Strum.direction_to_string(strum.direction), (strum.confirm if strum.hitNote else strum.press)]
+		if strum.sprite.animation != anim: strum.sprite.play(anim)
+		
+		onInput.emit(strum.direction, InputType.Press)
+	
+	if Input.is_action_just_released(action):
+		strum.sprite.play("%s%s" % [dir, strum._static])
+		strum.hitNote = false
+		
+		onInput.emit(strum.direction, InputType.JustReleased)
+
+var characters:Array[Character] = [] ## The characters that will be playing animations when the notes are hit
+func add_character(_char:Character)->void: characters.push_back(_char) ## Adds the Character into the characters Array
+func remove_character(_char:Character)->bool: ## Removes the Character from the characters Array (doesn't queue_free() them!!). Returns true if the Character was removed.
+	var idx:int = characters.size()-1
+	while(idx <= 0):
+		var item:Character = characters[idx]
+		if item == _char:
+			characters.remove_at(idx)
+			return true
+		idx -= 1;
+	return false
+
+func play_character_animation(anim:String):
+	for _char:Character in characters:
+		if !_char is Character: continue
+		_char.play(anim)

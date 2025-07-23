@@ -5,11 +5,14 @@ extends Node2D
 
 func _ready() -> void:
 	
+	var testCharacter = Character.new()
+	add_child(testCharacter)
+	testCharacter.position.x = 720
+	player.add_character(testCharacter)
+	
 	var song = Song.new()
 	song.init("linkbite")
 	add_child(song)
 	Conductor.intro(0)
 	Song.codenameParse("linkbite", "hard", [cpu, player])
-
-func _process(delta: float) -> void:
-	FunkinGame.instance.camera.position.x -= delta * 25
+	
