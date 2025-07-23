@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="LJ Engine Godot"
-config/description="Enter an interesting project description here!"
+config/description="Fnf Engine made easy in Godot!"
+config/version="0.0.1"
 run/main_scene="uid://dwwj0wky3eraf"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
@@ -37,6 +38,7 @@ folder_colors={
 "res://Assets/Notes/": "gray",
 "res://Assets/Songs/": "gray",
 "res://Assets/Sounds/": "gray",
+"res://Assets/Stages/": "gray",
 "res://Funkin/": "green",
 "res://Funkin/Backend/": "orange",
 "res://Funkin/Game/": "blue",
