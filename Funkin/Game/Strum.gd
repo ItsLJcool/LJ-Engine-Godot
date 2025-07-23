@@ -75,11 +75,11 @@ func loop_for_notes(fiction:Callable) -> void: ## Simple utility function to qui
 
 # Now we take the time to render
 func _process(_delta: float) -> void:
-	
-	var idx = notes_to_spawn.size()-1;
-	while(idx >= 0):
+	if (Engine.is_editor_hint()): return
+	var idx = 0
+	while(idx < notes_to_spawn.size()):
 		var note = notes_to_spawn[idx]
 		if (note.t - Conductor.song_position) <= render_limit: 
 			spawn_note(note.t, note.l).render = true
 			notes_to_spawn.remove_at(idx)
-		idx -= 1;
+		idx += 1;
