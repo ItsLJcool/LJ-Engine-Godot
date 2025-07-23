@@ -6,34 +6,6 @@ This is just a fun side project for me to learn 2D godot and wrap my head around
 
 ### You are more than welcome to make Pull Requests and Issues.
 
-## Current State
-Here is all that I have gotten to work so far:
-
-1. ImagesToSpriteFrames.gd
-- currently no GUI but in the script all it does is convert your Image and XML from Flixel FNF to a `.tres` file with the images embedded inside it, and with the animations. You can look at the `default` folder in `Asssets/Notes` to see how the formating works here.
-
-2. Song.gd
-- All it does is just act as a Util class for parsing charts, and playing songs.
-
-- Parses CodenameEngine charting for now.
-
-3. Note.gd
-- The sustain is a `Line2D` so you can define points for your funky sustains.
-
-- The Actual Note Sprite is seperate from the `Line2D` so you can rotate, scale and move the normal note around. I'd reccomend only using it to rotate the note around as it will look weird otherwise.
-
-4. Strum.gd
-- This is where your input is handled, and how notes are spawned and destroyed.
-
-- The note's are stored in the `Notes` `Node2D`, instead of stored in an array variable.
-
-- It has the same structure like the `Note.gd`, as the Actual sprite for the Static Note is a child of the `Strum` `Node2D`
-
-5. StrumLine.gd
-- All this really is used for is to wrap your `Strum`s Into a single `Node2D` and some variables you can mess around with. Like the position of the X and Y of the window, and the amount ***(currently doesn't work, no multikey supported)***
-
-And that's really for for now.
-
 ## Please go read the TODO.md file.
 [It has a list of things needing to be done.](./TODO.md)
 
