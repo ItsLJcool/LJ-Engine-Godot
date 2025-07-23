@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c54s8ig41f5nt"]
 
-[ext_resource type="SpriteFrames" uid="uid://dpbuuyqrfrk32" path="res://Assets/Notes/default/static.tres" id="1_c4yec"]
 [ext_resource type="Script" uid="uid://btxkya3nncruo" path="res://Funkin/Game/Strum.gd" id="1_x7ed5"]
+[ext_resource type="SpriteFrames" uid="uid://dpbuuyqrfrk32" path="res://Assets/Images/Notes/default/static.tres" id="2_x7ed5"]
 
 [node name="Strum" type="Node2D"]
 scale = Vector2(0.7, 0.7)
@@ -9,10 +9,9 @@ script = ExtResource("1_x7ed5")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 editor_description = "Your physical sprite you can move around without affecting the actual Node"
-sprite_frames = ExtResource("1_c4yec")
+sprite_frames = ExtResource("2_x7ed5")
 animation = &"left-static"
 autoplay = "left-static"
-frame_progress = 1.0
 
 [node name="Notes" type="Node2D" parent="."]
 editor_description = "The container of your `Notes` for this `Strum`"

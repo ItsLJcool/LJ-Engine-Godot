@@ -7,8 +7,9 @@ class_name Note extends Node2D
 @onready var clipRect:Control = $Sustain/ClipRect ## Used for clipping the end Sprite2D when hitting the full sustain
 @onready var end:Sprite2D = $Sustain/ClipRect/End ## The end tail piece
 
-var sustainsPath:String = "res://Assets/Notes/%s/sustains/%s-sustain.png" ## Path for your sustain Images. use %s for the direction name
-var endPath:String = "res://Assets/Notes/%s/sustains/%s-end.png" ## Path for your end Images. use %s for the direction name
+var notePath:String = "res://Assets/Images/Notes/%s/arrows.tres"
+var sustainsPath:String = "res://Assets/Images/Notes/%s/sustains/%s-sustain.png" ## Path for your sustain Images. use %s for the direction name
+var endPath:String = "res://Assets/Images/Notes/%s/sustains/%s-end.png" ## Path for your end Images. use %s for the direction name
 
 var strum:Strum ## The Note's bounded Strum
 
@@ -39,16 +40,19 @@ var susLength:float = 200: ## The length of the sustain.
 var strumTime:float = 3000: ## The time in MS when the note should be hit
 	set(value): strumTime = abs(value)
 
-var earlyPressWindow:float = 0.5 ## Placeholder Information. I have no clue what this does
-var latePressWindow:float = 1 ## Placeholder Information. I have no clue what this does
-
 var canBeHit:bool = false ## If the note can be hit when in range of the Static Strum
 var tooLate:bool = false ## If the note was too late to be hit
 var wasGoodHit:bool = false ## If the note was hit
 
-var hitWindow:float = 160; ## Time im MS of the window you have to hit the note
+var avoid:bool = false ## If true, hitting the note counts as a miss
 
-var avoid:bool = false; ## If true, hitting the note counts as a miss
+var failedHit:bool = false:
+	set(value):
+		if !isSustainNote: return
+		if (value):
+			self.modulate.a = 0.5
+			self.z_index = -1
+		failedHit = value
 #endregion
 
 func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing the Note to be used
@@ -57,6 +61,8 @@ func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing t
 	strum = _strum
 	strumTime = time
 	susLength = sustainLength
+	
+	sprite.sprite_frames = load(notePath % "default")
 	
 	if (sprite.sprite_frames.get_meta("use_rotation")):
 		match strum.direction:
@@ -97,13 +103,12 @@ func _process(_delta: float) -> void:
 # Hitting a sustain like normal but releasing it early should cause it to never be hittable again.
 # Thats how I want the engine to handle sustains.
 func update_note()->void: ## Call this to update position progression, and if the note should be hittable
-	@warning_ignore("integer_division")
-	self.position.y = (strumTime - Conductor.song_position) * (0.6 * (int(strum.scrollSpeed * 100) / 100) )
+	self.position.y = (strumTime - Conductor.song_position) * (0.6 * ((strum.scrollSpeed * 100) / 100) )
 	
-	canBeHit = ((strumTime + susLength) > Conductor.song_position - (hitWindow * latePressWindow)
-		and strumTime < Conductor.song_position + (hitWindow * earlyPressWindow))
+	canBeHit = !failedHit and ((strumTime + susLength) > Conductor.song_position - (strum.hitWindow * strum.latePressWindow)
+		and strumTime < Conductor.song_position + (strum.hitWindow * strum.earlyPressWindow))
 	
-	if ((strumTime + susLength) < (Conductor.song_position - hitWindow) and !wasGoodHit):
+	if ((strumTime + susLength) < (Conductor.song_position - strum.hitWindow) and !wasGoodHit):
 		tooLate = true
 	
 	if (!strum.strumLine.isPlayer && !avoid && !wasGoodHit && strumTime < Conductor.song_position):
@@ -119,6 +124,7 @@ func update_note()->void: ## Call this to update position progression, and if th
 	
 	if isSustainNote: update_sustain()
 
+# TODO: rewrite how sustains work :sob:
 func update_sustain()->void: ## Updates the Length of the sustain when hitting or not hitting.
 	var point_count:int = sustain.get_point_count()
 	var last_point:Vector2 = sustain.get_point_position(point_count-1)
@@ -142,6 +148,8 @@ func update_sustain()->void: ## Updates the Length of the sustain when hitting o
 	sustain.set_point_position(point_count-1, last_point)
 	
 	clipRect.position.x = -(endSize.x * 0.5)
+	clipRect.position.y = endSize.y * 0.5
+	if y_val < 0: clipRect.position.y += y_val
 	clipRect.size.x = endSize.x
 	clipRect.size.y = y_val + endSize.y
 	

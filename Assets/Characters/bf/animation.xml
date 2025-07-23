@@ -1,0 +1,4 @@
+<!DOCTYPE character-animations>
+<character scale="0.5" flipX="false" flipY="false"/>
+    <anim name="idle" fps="24" loop="false" x="-200" y="-200">
+</character>

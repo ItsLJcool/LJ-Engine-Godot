@@ -4,7 +4,6 @@ extends Node2D
 @onready var cpu:StrumLine = $UILayer/Cpu
 
 func _ready() -> void:
-	
 	var testCharacter = Character.new()
 	add_child(testCharacter)
 	testCharacter.position.x = 720

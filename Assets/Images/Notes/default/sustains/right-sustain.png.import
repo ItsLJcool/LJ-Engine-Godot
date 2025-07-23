@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sfs8lqh0y6t3"
-path="res://.godot/imported/daddyDearest.png-a1afac9ca0906bf8c7a7f66dbfae8f74.ctex"
+uid="uid://brf27oigkgbrx"
+path="res://.godot/imported/right-sustain.png-6814ddd728da0b71d768ae638a5d1bb3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Characters/daddyDearest.png"
-dest_files=["res://.godot/imported/daddyDearest.png-a1afac9ca0906bf8c7a7f66dbfae8f74.ctex"]
+source_file="res://Assets/Images/Notes/default/sustains/right-sustain.png"
+dest_files=["res://.godot/imported/right-sustain.png-6814ddd728da0b71d768ae638a5d1bb3.ctex"]
 
 [params]
 

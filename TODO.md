@@ -7,14 +7,11 @@
 
 - [x] Add FPS Counter, PC Specs, and other useful information.
 
-- [ ] UI For `ImagesToSpriteFrames` Scene
-  - [x] Figure out why the fuck a basic Character sheet is 1gb in size.
-  - [ ] Somehow support Rotated Sprites
-  - [ ] Add support for Animated Atlases?
-
 - [x] Add Characters
+  - [x] Animation Offsets
   - [ ] Make character dance on beat, and singing animations based off of V-Slice
-  - [ ] Animation Offsets
+  - [ ] Somehow support Rotated Sprites
+  - [ ] Add support for Animated Atlases??? Maybe???
 
 - [ ] Possibly rework file structure
 
@@ -43,7 +40,7 @@
 
 - [ ] Re-implement `NotePath` for custom note pathing.
 
-- [ ] Optimize `Sustain` rendering.
+- [ ] Rewrite how Sustains are updated, and optimize it. 🙏
 
 - [ ] Add Alphabet Support
 

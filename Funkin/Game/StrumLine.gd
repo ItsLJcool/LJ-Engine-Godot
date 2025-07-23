@@ -85,6 +85,7 @@ func loop_for_strums(fiction:Callable) -> void: ## Basic Util for looping throug
 
 func on_input(strum:Strum)->void:
 	if Engine.is_editor_hint(): return
+	
 	var dir = Strum.direction_to_string(strum.direction)
 	var action = strum.INPUT_NAME % dir
 	
@@ -102,6 +103,11 @@ func on_input(strum:Strum)->void:
 	if Input.is_action_just_released(action):
 		strum.sprite.play("%s%s" % [dir, strum._static])
 		strum.hitNote = false
+		
+		strum.loop_for_notes(func(note:Note):
+			if note.failedHit or (!note.canBeHit and !note.wasGoodHit): return
+			note.failedHit = true
+		)
 		
 		onInput.emit(strum.direction, InputType.JustReleased)
 

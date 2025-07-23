@@ -1,13 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://c8hw7ros87stp"]
+[gd_scene load_steps=2 format=3 uid="uid://c8hw7ros87stp"]
 
-[ext_resource type="SpriteFrames" uid="uid://bdjup0n84ibrw" path="res://Assets/Characters/bf.tres" id="1_5wgne"]
 [ext_resource type="Script" uid="uid://blop6ktg2hjmp" path="res://Funkin/Game/Character.gd" id="2_crvj2"]
 
 [node name="Character" type="AnimatedSprite2D"]
-sprite_frames = ExtResource("1_5wgne")
-animation = &"idle"
+animation = &""
 autoplay = "idle"
-frame = 13
-frame_progress = 1.0
 centered = false
 script = ExtResource("2_crvj2")

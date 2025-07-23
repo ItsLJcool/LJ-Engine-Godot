@@ -5,8 +5,14 @@ class_name Strum extends Node2D
 @onready var sprite:AnimatedSprite2D = $Sprite ## The "Strum"'s Sprite itself.
 @onready var notesGroup:Node2D = $Notes ## A Node2D containing all the notes in the song. Better than an array!
 
+var strumPath:String = "res://Assets/Images/Notes/%s/static.tres"
+
 ## The MS render distance to update a note. 1500 is usually off screen but adjust if the window height or zoom makes notes appear randomly
 var render_limit:float = 1500
+
+var earlyPressWindow:float = 0.5 ## Placeholder Information. I have no clue what this does
+var latePressWindow:float = 1 ## Placeholder Information. I have no clue what this does
+var hitWindow:float = 160 ## Time im MS of the window you have to hit the note
 
 #region Strum Values
 
@@ -45,10 +51,11 @@ enum NoteDirection {
 #endregion
 
 func _ready():
-	init()
+	pass
 
 func init()->void: ## Initalizes the strum 
 	if !sprite: return
+	sprite.sprite_frames = load(strumPath % "default")
 	sprite.play("%s%s" % [direction_to_string(direction), _static])
 
 const INPUT_NAME = &"NOTE_%s" ## For inputs, using the Keybind names
