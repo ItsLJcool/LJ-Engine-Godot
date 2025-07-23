@@ -1,38 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://mfeb0xxcwdnm"]
+[gd_scene load_steps=5 format=3 uid="uid://b7hgmg8e8ia7b"]
 
-[sub_resource type="Resource" id="Resource_kiync"]
-metadata/__load_path__ = "res://scripts/SoundTray.gd"
-
-[sub_resource type="Theme" id="Theme_0go3i"]
+[ext_resource type="Script" uid="uid://v8ve423fylap" path="res://Funkin/Backend/Internal/SoundTray.gd" id="1_5mtln"]
+[ext_resource type="Texture2D" uid="uid://bffjq0d8d526s" path="res://Assets/Images/soundtray/volumebox.png" id="2_n75nl"]
+[ext_resource type="Texture2D" uid="uid://b8hh1q03r3hwe" path="res://Assets/Images/soundtray/bars.png" id="3_edjxd"]
+[ext_resource type="AudioStream" uid="uid://bckxp16b77dvb" path="res://Assets/Sounds/soundtray/Voldown.ogg" id="4_n75nl"]
 
 [node name="SoundTray" type="Node2D"]
+script = ExtResource("1_5mtln")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(576, 324)
-enabled = false
+[node name="Volumebox" type="Sprite2D" parent="."]
+texture = ExtResource("2_n75nl")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="Camera2D"]
-script = SubResource("Resource_kiync")
+[node name="ClipRect" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="Panel" type="Panel" parent="Camera2D/CanvasLayer"]
-offset_left = 1177.0
-offset_top = 580.0
-offset_right = 1498.0
-offset_bottom = 620.0
-theme = SubResource("Theme_0go3i")
+[node name="BarVolume" type="Sprite2D" parent="ClipRect"]
+texture = ExtResource("3_edjxd")
+centered = false
 
-[node name="Volume" type="ProgressBar" parent="Camera2D/CanvasLayer/Panel"]
-layout_direction = 2
-layout_mode = 0
-offset_left = 20.0
-offset_top = 7.0
-offset_right = 303.0
-offset_bottom = 34.0
-tooltip_text = "Volume"
-show_percentage = false
+[node name="HideTimer" type="Timer" parent="."]
+wait_time = 2.0
 
-[node name="Timer" type="Timer" parent="Camera2D/CanvasLayer"]
-wait_time = 5.0
-autostart = true
+[node name="VolumeUp" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_n75nl")
 
-[connection signal="timeout" from="Camera2D/CanvasLayer/Timer" to="Camera2D/CanvasLayer" method="_on_timer_timeout"]
+[node name="VolumeDown" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_n75nl")
+
+[node name="VolumeMAX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_n75nl")

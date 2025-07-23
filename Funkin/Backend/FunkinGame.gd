@@ -13,6 +13,8 @@ static var instance:FunkinGame
 
 @onready var camera:Camera2D = $Camera ## This is your camera that the FunkinGame will render to.
 
+@onready var SoundTray:Node2D = $Information/SoundTray
+
 #region Utility Functions
 
 func add_UI(node:Node): UI_LAYER.add_child(node) ## Adds your Node to the UI Layer. This will always render above the Game Layer
@@ -34,6 +36,8 @@ func _ready():
 	instance = self
 	# So the camera is always in the center on start-up no matter what
 	camera.position = window.size * 0.5
+	SoundTray.position.x = window.size.x * 0.5
+	SoundTray.position.y = -100
 	
 	# Initalize starting scene.
 	switch_state(STARTING_SCENE)

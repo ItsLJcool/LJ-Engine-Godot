@@ -91,7 +91,7 @@ func _process(_delta: float) -> void:
 	update_note()
 	
 	if canBeHit and wasGoodHit and !tooLate: 
-		strum.strumLine.play_character_animation("sing"+strum.direction_to_string(strum.direction).to_upper())
+		strum.strumLine.play_character_animation("sing"+Strum.direction_to_string(strum.direction).to_upper())
 
 # Ok reference to everyone here:
 # Hitting a sustain like normal but releasing it early should cause it to never be hittable again.
