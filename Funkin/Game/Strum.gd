@@ -2,10 +2,12 @@
 ## A single Strum that builds a StrumLine. Contains all the Notes that you press on this Strum
 class_name Strum extends Node2D
 
+signal onInput(direction:NoteDirection, input:InputType) ## Emits a signal for various Key Inputs
+
 @onready var sprite:AnimatedSprite2D = $Sprite ## The "Strum"'s Sprite itself.
 @onready var notesGroup:Node2D = $Notes ## A Node2D containing all the notes in the song. Better than an array!
 
-var strumPath:String = "res://Assets/Images/Notes/%s/static.tres"
+var strum_path:String = "res://Assets/Images/Notes/%s/static.tres"
 
 ## The MS render distance to update a note. 1500 is usually off screen but adjust if the window height or zoom makes notes appear randomly
 var render_limit:float = 1500
@@ -48,6 +50,13 @@ enum NoteDirection {
  	UP = 2,
 	RIGHT = 3,
 }
+
+enum InputType {
+	Press,
+	Release,
+	JustPressed,
+	JustReleased
+}
 #endregion
 
 func _ready():
@@ -55,7 +64,7 @@ func _ready():
 
 func init()->void: ## Initalizes the strum 
 	if !sprite: return
-	sprite.sprite_frames = load(strumPath % "default")
+	sprite.sprite_frames = load(strum_path % "default")
 	sprite.play("%s%s" % [direction_to_string(direction), _static])
 
 const INPUT_NAME = &"NOTE_%s" ## For inputs, using the Keybind names
@@ -90,3 +99,34 @@ func _process(_delta: float) -> void:
 			spawn_note(note.t, note.l).render = true
 			notes_to_spawn.remove_at(idx)
 		idx += 1;
+
+# _input might be annoying?? Jack notes and some notes die when they should huh.
+func _input(event:InputEvent):
+	if !strumLine.isPlayer or Engine.is_editor_hint(): return
+	
+	if event is InputEventMouse: return
+	
+	var dir = direction_to_string(direction)
+	var action = INPUT_NAME % dir
+	
+	if Input.is_action_just_pressed(action):
+		loop_for_notes(func(note:Note): if note.canBeHit and !note.wasGoodHit: note.goodNoteHit() )
+		
+		onInput.emit(direction, InputType.JustPressed)
+	
+	if event.is_action_pressed(action):
+		var anim = "%s%s" % [direction_to_string(direction), (confirm if hitNote else press)]
+		if sprite.animation != anim: sprite.play(anim)
+		
+		onInput.emit(direction, InputType.Press)
+	
+	if event.is_action_released(action):
+		sprite.play("%s%s" % [dir, _static])
+		hitNote = false
+		
+		loop_for_notes(func(note:Note):
+			if note.failedHit or (!note.canBeHit and !note.wasGoodHit): return
+			note.failedHit = true
+		)
+		
+		onInput.emit(direction, InputType.JustReleased)

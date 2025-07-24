@@ -3,9 +3,11 @@ class_name Note extends Node2D
 #region Initalize Variable Names
 
 @onready var sprite:AnimatedSprite2D = $Sprite ## The "Note" Sprite Itself. Not the Root Class for independent rotations.
+
 @onready var sustain:Line2D = $Sustain ## Your Sustain. Instead of like 5 billion seperate images 🔥
 @onready var clipRect:Control = $Sustain/ClipRect ## Used for clipping the end Sprite2D when hitting the full sustain
 @onready var end:Sprite2D = $Sustain/ClipRect/End ## The end tail piece
+
 
 var notePath:String = "res://Assets/Images/Notes/%s/arrows.tres"
 var sustainsPath:String = "res://Assets/Images/Notes/%s/sustains/%s-sustain.png" ## Path for your sustain Images. use %s for the direction name
