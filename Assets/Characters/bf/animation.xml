@@ -1,4 +1,8 @@
 <!DOCTYPE character-animations>
 <character scale="0.5" flipX="false" flipY="false"/>
     <anim name="idle" fps="24" loop="false" x="-200" y="-200">
+    <anim name="singLEFT" fps="24" loop="false" x="-200" y="-200">
+    <anim name="singDOWN" fps="24" loop="false" x="-200" y="-200">
+    <anim name="singUP" fps="24" loop="false" x="-200" y="-200">
+    <anim name="singRIGHT" fps="24" loop="false" x="-200" y="-200">
 </character>

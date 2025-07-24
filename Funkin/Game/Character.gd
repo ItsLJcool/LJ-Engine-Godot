@@ -24,6 +24,7 @@ func _ready() -> void:
 	Conductor.beat_hit.connect(beatHit)
 
 #region Animation and SpriteFrames
+
 var animation_offsets:Dictionary[String, Vector2] = {}
 func set_anim_offset(anim:String, offsetPos:Vector2)->void: animation_offsets[anim] = offsetPos
 func get_anim_offset(anim:String)->Vector2: return animation_offsets[anim] if (animation_offsets.has(anim)) else Vector2.ZERO
@@ -146,7 +147,6 @@ func load_animation()->void:
 			sprite_frames.add_frame(anim, animTexture)
 
 #endregion
-
 
 # TODO:
 # Make Character dance when not playing notes, and make the Singing animations based off of V-Slice pls 🙏
