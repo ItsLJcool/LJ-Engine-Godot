@@ -51,6 +51,7 @@ func _ready():
 	if instance != null:
 		queue_free()
 		return
+	
 	instance = self
 	# So the camera is always in the center on start-up no matter what
 	camera.position = window.size * 0.5
