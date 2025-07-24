@@ -4,8 +4,8 @@ class_name Note extends Node2D
 
 @onready var sprite:AnimatedSprite2D = $Sprite ## The "Note" Sprite Itself. Not the Root Class for independent rotations.
 
-@onready var sustain:Line2D = $Sustain ## Your Sustain. Instead of like 5 billion seperate images 🔥
 @onready var clipRect:Control = $Sustain/ClipRect ## Used for clipping the end Sprite2D when hitting the full sustain
+@onready var sustain:Line2D = $Sustain ## Your Sustain. Instead of like 5 billion seperate images 🔥
 @onready var end:Sprite2D = $Sustain/ClipRect/End ## The end tail piece
 
 
@@ -74,9 +74,11 @@ func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing t
 	sprite.play(dirName)
 	sustain.texture = load(sustainsPath % ["default", dirName])
 	end.texture = load(endPath % ["default", dirName])
+	
+	clipRect.size = Vector2.ONE * sustain.width
 
 func _ready():
-	if (!Engine.is_editor_hint()): clipRect.clip_contents = true;
+	clipRect.clip_contents = true
 	self.position.y = -5000
 	
 func deleteNote(): ## Simply just destroys the note
@@ -105,7 +107,8 @@ func _process(_delta: float) -> void:
 # Hitting a sustain like normal but releasing it early should cause it to never be hittable again.
 # Thats how I want the engine to handle sustains.
 func update_note()->void: ## Call this to update position progression, and if the note should be hittable
-	self.position.y = (strumTime - Conductor.song_position) * (0.6 * ((strum.scrollSpeed * 100) / 100) )
+	var lengthPog:float = (0.6 * ((strum.scrollSpeed) * 100) / 100)
+	self.position.y = (strumTime - Conductor.song_position) * lengthPog
 	
 	canBeHit = !failedHit and ((strumTime + susLength) > Conductor.song_position - (strum.hitWindow * strum.latePressWindow)
 		and strumTime < Conductor.song_position + (strum.hitWindow * strum.earlyPressWindow))
@@ -124,36 +127,33 @@ func update_note()->void: ## Call this to update position progression, and if th
 		deleteNote()
 		return
 	
-	if isSustainNote: update_sustain()
+	if isSustainNote: update_sustain(lengthPog)
 
 # TODO: rewrite how sustains work :sob:
-func update_sustain()->void: ## Updates the Length of the sustain when hitting or not hitting.
-	var point_count:int = sustain.get_point_count()
-	var last_point:Vector2 = sustain.get_point_position(point_count-1)
+func update_sustain(lengthPog:float)->void: ## Updates the Length of the sustain when hitting or not hitting.
+	var points_count:int = sustain.get_point_count()
+	if points_count < 2: return
+
+	var last_point = sustain.points[-1];
+	var end_size:Vector2 = end.texture.get_size()
 	
-	var endSize:Vector2 = Vector2(end.texture.get_width(), end.texture.get_height())
-	
-	var lengthPog:float = (0.6 * round(strum.scrollSpeed * 100) / 100)
-	var y_val:float = 0.0
-	
+	var y_val:float = 0;
 	if wasGoodHit:
-		y_val = ((susLength + (strumTime - Conductor.song_position)) * lengthPog)
-		sustain.position.y = -(position.y - strum.position.y)
+		y_val = ((susLength + (strumTime - Conductor.song_position)) * lengthPog);
+		sustain.position.y = -(position.y - strum.position.y);
 	else:
-		y_val = (susLength * lengthPog)
-		sustain.position.y = 0
+		y_val = (susLength * lengthPog);
+		sustain.position.y = 0;
 	
-	y_val -= endSize.y
+	y_val -= end_size.y
 	
 	last_point.y = max(y_val, 0)
 	
-	sustain.set_point_position(point_count-1, last_point)
+	sustain.points[-1] = last_point
 	
-	clipRect.position.x = -(endSize.x * 0.5)
-	clipRect.position.y = endSize.y * 0.5
-	if y_val < 0: clipRect.position.y += y_val
-	clipRect.size.x = endSize.x
-	clipRect.size.y = y_val + endSize.y
+	clipRect.position.x = -(end_size.x * 0.5);
+	clipRect.size.x = end_size.x
+	clipRect.size.y = y_val + end_size.y
 	
-	end.position.x = endSize.x * 0.5
-	end.position.y = y_val
+	end.position.x = end_size.x * 0.5;
+	end.position.y = last_point.y + (end_size.y * 0.5);

@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="LJ Engine Godot"
+config/name="LJ Engine (Stable)"
 config/description="Fnf Engine made easy in Godot!"
 config/version="0.0.1"
 run/main_scene="uid://dwwj0wky3eraf"
