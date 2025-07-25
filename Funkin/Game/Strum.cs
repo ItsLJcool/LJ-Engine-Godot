@@ -1,21 +1,19 @@
 using Godot;
-using Godot.Collections;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
-public partial class PreloadedNote(float time, float susLength) : Node
+public struct PreloadedNote(float time, float susLength)
 {
     public float time = time;
     public float susLength = susLength;
 }
 
-public partial class TestStrum : Node2D
+public partial class Strum : Node2D
 {
-    private Node Conductor;
     public AnimatedSprite2D Sprite;
     public Node2D Notes;
-    public TestStrumLine StrumLine; // TODO: implement StrumLine
+    public StrumLine StrumLine;
 
     const string Press = "-press";
     const string Confirm = "-confirm";
@@ -46,12 +44,14 @@ public partial class TestStrum : Node2D
     }
     public string[] DirectionStrings = ["left", "down", "up", "right"];
     const string INPUT_NAME = "NOTE_{0}";
-    public string DirectionToString() { return DirectionStrings[direction % StrumsAmount]; }
+    public string DirectionToString
+    {
+        get => DirectionStrings[direction % StrumsAmount];
+    }
 
     public override void _Ready()
     {
-        Conductor = GetNode<Node>("/root/Conductor");
-        NoteBlueprint = GD.Load<PackedScene>("res://TestNote.tscn");
+        NoteBlueprint = GD.Load<PackedScene>("res://Funkin/Game/Note.tscn");
         Sprite = GetNode<AnimatedSprite2D>("Sprite");
         Notes = GetNode<Node2D>("Notes");
 
@@ -66,24 +66,25 @@ public partial class TestStrum : Node2D
         PreloadNote(8000, 400);
     }
 
-    public void Init(TestStrumLine strumline, int dir)
+    public void Init(StrumLine strumline, int dir)
     {
         StrumLine = strumline;
         Direction = dir;
         Scale = new Vector2(StrumLine.StrumScale, StrumLine.StrumScale);
-        Sprite.Play(DirectionToString() + Static);
+        Sprite.Play(DirectionToString + Static);
     }
 
-    private Array<PreloadedNote> NotesToSpawn = [];
-    public void PreloadNote(float time, float susLength)
+    private readonly List<float> NotesToSpawn = [];
+    public void PreloadNote(float t, float l)
     {
-        NotesToSpawn.Add(new PreloadedNote(time, susLength));
+        NotesToSpawn.Add(t);
+        NotesToSpawn.Add(l);
     }
 
     public PackedScene NoteBlueprint;
     public void SpawnNote(float time, float susLength)
     {
-        var NewNote = NoteBlueprint.Instantiate<TestNote>();
+        var NewNote = NoteBlueprint.Instantiate<Note>();
         Notes.AddChild(NewNote);
         NewNote.Init(this, time, susLength);
     }
@@ -92,36 +93,41 @@ public partial class TestStrum : Node2D
     {
         base._Process(delta);
 
-        for (int i = 0; i < NotesToSpawn.Count; i++)
+        if (NotesToSpawn.Count >= 2)
         {
-            PreloadedNote Note = NotesToSpawn[i];
-            if (Note.time - (float)Conductor.Get("song_position") > RenderLimit) continue;
-            SpawnNote(Note.time, Note.susLength);
-            NotesToSpawn.RemoveAt(i);
+            float t = NotesToSpawn[0];
+            float s = NotesToSpawn[1];
+            if (t - (float)Conductor.Instance.SongPosition <= RenderLimit)
+            {
+                SpawnNote(t, s);
+                NotesToSpawn.RemoveAt(0);
+                NotesToSpawn.RemoveAt(0);
+            }
         }
 
-        OnInput();
     }
-
-    public void OnInput()
+    public override void _Input(InputEvent @event)
     {
-        var input_name = string.Format(INPUT_NAME, DirectionToString());
-
-        if (Input.IsActionJustPressed(input_name))
-        {
-            foreach (TestNote Note in Notes.GetChildren().Cast<TestNote>())
-            { if (Note.CanBeHit && !Note.WasGoodHit) Note.GoodNoteHit(); }
-        }
+        base._Input(@event);
+        var input_name = string.Format(INPUT_NAME, DirectionToString);
 
         if (Input.IsActionPressed(input_name))
         {
-            string anim = string.Format("{0}{1}", DirectionToString(), (!HittingNote) ? Press : Confirm);
+            string anim = string.Format("{0}{1}", DirectionToString, (!HittingNote) ? Press : Confirm);
             if (Sprite.Animation != anim) Sprite.Play(anim);
         }
 
-        if (Input.IsActionJustReleased(input_name))
+        if (@event.IsActionPressed(input_name))
         {
-            Sprite.Play(DirectionToString() + Static);
+            foreach (Note Note in Notes.GetChildren().Select(Note => Note as Note).Where(Note => Note.CanBeHit && !Note.WasGoodHit))
+            {
+                Note.GoodNoteHit();
+            }
+        }
+
+        if (@event.IsActionReleased(input_name))
+        {
+            Sprite.Play(DirectionToString + Static);
             HittingNote = false;
         }
     }

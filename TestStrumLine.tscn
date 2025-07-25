@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d30q5njdtca0n"]
-
-[ext_resource type="Script" uid="uid://ci6a0vbjy8gb" path="res://TestStrumLine.cs" id="1_j0431"]
-
-[node name="StrumLine" type="Node2D"]
-script = ExtResource("1_j0431")
-
-[node name="Strums" type="Node2D" parent="."]

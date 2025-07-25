@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 
 [Tool]
-public partial class TestStrumLine : Node2D
+public partial class StrumLine : Node2D
 {
     Node2D StrumsGroup;
 
@@ -44,7 +44,7 @@ public partial class TestStrumLine : Node2D
     {
         StrumsGroup = GetNode<Node2D>("Strums");
 
-        StrumBlueprint = GD.Load<PackedScene>("res://TestStrum.tscn");
+        StrumBlueprint = GD.Load<PackedScene>("res://Funkin/Game/Strum.tscn");
 
         RefreshStrums(true);
     }
@@ -52,13 +52,14 @@ public partial class TestStrumLine : Node2D
     public PackedScene StrumBlueprint;
     public void RefreshStrums(bool reset = false)
     {
+        if (Engine.IsEditorHint()) return;
         if (StrumsGroup == null) return;
         if (reset)
         {
             foreach (var Strum in StrumsGroup.GetChildren()) Strum.QueueFree();
             for (int i = 0; i < StrumAmount; i++)
             {
-                var NewStrum = StrumBlueprint.Instantiate<TestStrum>();
+                var NewStrum = StrumBlueprint.Instantiate<Strum>();
                 NewStrum.Name = i.ToString();
                 StrumsGroup.AddChild(NewStrum);
                 NewStrum.Init(this, i);
@@ -73,7 +74,7 @@ public partial class TestStrumLine : Node2D
         StrumsGroup.Position = new Vector2(formula, 75);
 
         int j = 0; // lazy
-        foreach (TestStrum Strum in StrumsGroup.GetChildren().Cast<TestStrum>())
+        foreach (Strum Strum in StrumsGroup.GetChildren().Cast<Strum>())
         {
             Vector2 pos = Strum.Position;
             pos.X = (Padding * StrumScale * j);

@@ -54,15 +54,15 @@ static func parseJson(songName:String, difficulty:String = "normal")->Dictionary
 	return json
 
 ## Parses your CodenameEngine JSON. Returns True if successful
-static func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array[StrumLine] = [])->bool:
+static func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array = [])->bool:
 	var json = parseJson(songName, difficulty)
 	if json == {}: return false
 	
 	var jsonStrumLine = json.strumLines
 	for idx in range(0, strumLines.size()):
-		var strumline:StrumLine = strumLines[idx]
+		var strumline = strumLines[idx]
 		if !strumline: continue
-		strumline.loop_for_strums(func(strum:Strum): strum.scrollSpeed = json.scrollSpeed)
+		strumline.loop_for_strums(func(strum): strum.scrollSpeed = json.scrollSpeed)
 		
 		var notes = jsonStrumLine[idx].notes
 		if !notes: continue
