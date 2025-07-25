@@ -1,10 +1,9 @@
 using Godot;
-using Godot.Collections;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
-public partial class PreloadedNote(float time, float susLength) : Node
+public struct PreloadedNote(float time, float susLength)
 {
     public float time = time;
     public float susLength = susLength;
@@ -46,7 +45,10 @@ public partial class TestStrum : Node2D
     }
     public string[] DirectionStrings = ["left", "down", "up", "right"];
     const string INPUT_NAME = "NOTE_{0}";
-    public string DirectionToString() { return DirectionStrings[direction % StrumsAmount]; }
+    public string DirectionToString
+    {
+        get => DirectionStrings[direction % StrumsAmount];
+    }
 
     public override void _Ready()
     {
@@ -71,13 +73,13 @@ public partial class TestStrum : Node2D
         StrumLine = strumline;
         Direction = dir;
         Scale = new Vector2(StrumLine.StrumScale, StrumLine.StrumScale);
-        Sprite.Play(DirectionToString() + Static);
+        Sprite.Play(DirectionToString + Static);
     }
 
-    private Array<PreloadedNote> NotesToSpawn = [];
+    private List<PreloadedNote> NotesToSpawn = [];
     public void PreloadNote(float time, float susLength)
     {
-        NotesToSpawn.Add(new PreloadedNote(time, susLength));
+        NotesToSpawn.Add(new(time, susLength));
     }
 
     public PackedScene NoteBlueprint;
@@ -92,37 +94,44 @@ public partial class TestStrum : Node2D
     {
         base._Process(delta);
 
+        float SongPosition = Conductor.Get("song_position").AsSingle();
         for (int i = 0; i < NotesToSpawn.Count; i++)
         {
             PreloadedNote Note = NotesToSpawn[i];
-            if (Note.time - (float)Conductor.Get("song_position") > RenderLimit) continue;
+            if (Note.time - SongPosition > RenderLimit) continue;
             SpawnNote(Note.time, Note.susLength);
             NotesToSpawn.RemoveAt(i);
         }
 
         OnInput();
     }
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+        var input_name = string.Format(INPUT_NAME, DirectionToString);
 
+        if (@event.IsActionPressed(input_name))
+        {
+            foreach (TestNote Note in Notes.GetChildren().Select(Note => Note as TestNote).Where(Note => Note.CanBeHit && !Note.WasGoodHit))
+            {
+                Note.GoodNoteHit();
+            }
+        }
+
+        if (@event.IsActionReleased(input_name))
+        {
+            Sprite.Play(DirectionToString + Static);
+            HittingNote = false;
+        }
+    }
     public void OnInput()
     {
-        var input_name = string.Format(INPUT_NAME, DirectionToString());
-
-        if (Input.IsActionJustPressed(input_name))
-        {
-            foreach (TestNote Note in Notes.GetChildren().Cast<TestNote>())
-            { if (Note.CanBeHit && !Note.WasGoodHit) Note.GoodNoteHit(); }
-        }
+        var input_name = string.Format(INPUT_NAME, DirectionToString);
 
         if (Input.IsActionPressed(input_name))
         {
-            string anim = string.Format("{0}{1}", DirectionToString(), (!HittingNote) ? Press : Confirm);
+            string anim = string.Format("{0}{1}", DirectionToString, (!HittingNote) ? Press : Confirm);
             if (Sprite.Animation != anim) Sprite.Play(anim);
-        }
-
-        if (Input.IsActionJustReleased(input_name))
-        {
-            Sprite.Play(DirectionToString() + Static);
-            HittingNote = false;
         }
     }
 }
