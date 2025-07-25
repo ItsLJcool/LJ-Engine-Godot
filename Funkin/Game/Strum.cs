@@ -9,12 +9,11 @@ public struct PreloadedNote(float time, float susLength)
     public float susLength = susLength;
 }
 
-public partial class TestStrum : Node2D
+public partial class Strum : Node2D
 {
-    private Node Conductor;
     public AnimatedSprite2D Sprite;
     public Node2D Notes;
-    public TestStrumLine StrumLine; // TODO: implement StrumLine
+    public StrumLine StrumLine;
 
     const string Press = "-press";
     const string Confirm = "-confirm";
@@ -52,8 +51,7 @@ public partial class TestStrum : Node2D
 
     public override void _Ready()
     {
-        Conductor = GetNode<Node>("/root/Conductor");
-        NoteBlueprint = GD.Load<PackedScene>("res://TestNote.tscn");
+        NoteBlueprint = GD.Load<PackedScene>("res://Funkin/Game/Note.tscn");
         Sprite = GetNode<AnimatedSprite2D>("Sprite");
         Notes = GetNode<Node2D>("Notes");
 
@@ -68,7 +66,7 @@ public partial class TestStrum : Node2D
         PreloadNote(8000, 400);
     }
 
-    public void Init(TestStrumLine strumline, int dir)
+    public void Init(StrumLine strumline, int dir)
     {
         StrumLine = strumline;
         Direction = dir;
@@ -76,16 +74,17 @@ public partial class TestStrum : Node2D
         Sprite.Play(DirectionToString + Static);
     }
 
-    private List<PreloadedNote> NotesToSpawn = [];
-    public void PreloadNote(float time, float susLength)
+    private readonly List<float> NotesToSpawn = [];
+    public void PreloadNote(float t, float l)
     {
-        NotesToSpawn.Add(new(time, susLength));
+        NotesToSpawn.Add(t);
+        NotesToSpawn.Add(l);
     }
 
     public PackedScene NoteBlueprint;
     public void SpawnNote(float time, float susLength)
     {
-        var NewNote = NoteBlueprint.Instantiate<TestNote>();
+        var NewNote = NoteBlueprint.Instantiate<Note>();
         Notes.AddChild(NewNote);
         NewNote.Init(this, time, susLength);
     }
@@ -94,25 +93,33 @@ public partial class TestStrum : Node2D
     {
         base._Process(delta);
 
-        float SongPosition = Conductor.Get("song_position").AsSingle();
-        for (int i = 0; i < NotesToSpawn.Count; i++)
+        if (NotesToSpawn.Count >= 2)
         {
-            PreloadedNote Note = NotesToSpawn[i];
-            if (Note.time - SongPosition > RenderLimit) continue;
-            SpawnNote(Note.time, Note.susLength);
-            NotesToSpawn.RemoveAt(i);
+            float t = NotesToSpawn[0];
+            float s = NotesToSpawn[1];
+            if (t - (float)Conductor.Instance.SongPosition <= RenderLimit)
+            {
+                SpawnNote(t, s);
+                NotesToSpawn.RemoveAt(0);
+                NotesToSpawn.RemoveAt(0);
+            }
         }
 
-        OnInput();
     }
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
         var input_name = string.Format(INPUT_NAME, DirectionToString);
 
+        if (Input.IsActionPressed(input_name))
+        {
+            string anim = string.Format("{0}{1}", DirectionToString, (!HittingNote) ? Press : Confirm);
+            if (Sprite.Animation != anim) Sprite.Play(anim);
+        }
+
         if (@event.IsActionPressed(input_name))
         {
-            foreach (TestNote Note in Notes.GetChildren().Select(Note => Note as TestNote).Where(Note => Note.CanBeHit && !Note.WasGoodHit))
+            foreach (Note Note in Notes.GetChildren().Select(Note => Note as Note).Where(Note => Note.CanBeHit && !Note.WasGoodHit))
             {
                 Note.GoodNoteHit();
             }
@@ -122,16 +129,6 @@ public partial class TestStrum : Node2D
         {
             Sprite.Play(DirectionToString + Static);
             HittingNote = false;
-        }
-    }
-    public void OnInput()
-    {
-        var input_name = string.Format(INPUT_NAME, DirectionToString);
-
-        if (Input.IsActionPressed(input_name))
-        {
-            string anim = string.Format("{0}{1}", DirectionToString, (!HittingNote) ? Press : Confirm);
-            if (Sprite.Animation != anim) Sprite.Play(anim);
         }
     }
 }

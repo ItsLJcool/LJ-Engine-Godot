@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="LJ Engine Godot"
+config/name="LJ Engine (Mono - Crimson Fork)"
 config/description="Fnf Engine made easy in Godot!"
 config/version="0.0.1"
 run/main_scene="uid://dwwj0wky3eraf"
@@ -19,7 +19,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Conductor="*res://Funkin/Backend/Conductor.gd"
+Conductor="*res://Funkin/Backend/Conductor.cs"
 
 [display]
 

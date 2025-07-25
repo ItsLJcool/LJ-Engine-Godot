@@ -1,10 +1,8 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
-public partial class TestNote : Node2D
+public partial class Note : Node2D
 {
-    private Node Conductor;
     // Initalize Node Variables
     public AnimatedSprite2D Sprite;
     public Line2D Sustain;
@@ -14,8 +12,7 @@ public partial class TestNote : Node2D
     const string SustainsPath = "res://Assets/Notes/{0}/sustains/{1}-sustain.png";
     const string EndPath = "res://Assets/Notes/{0}/sustains/{1}-end.png";
 
-    // The Note's Referenced Strum
-    public TestStrum Strum;
+    public Strum Strum;
 
     private float strumTime = 2000.0f;
     public float StrumTime
@@ -23,7 +20,12 @@ public partial class TestNote : Node2D
         get { return strumTime; }
         set { strumTime = Math.Abs(value); }
     }
-    public float SusLength = 200.0f;
+    private float susLength = 200.0f;
+    public float SusLength
+    {
+        get { return susLength; }
+        set { susLength = Math.Abs(value); }
+    }
 
     public bool isSustainNote = true;
 
@@ -32,14 +34,14 @@ public partial class TestNote : Node2D
     public bool WasGoodHit = false;
     public bool Avoid = false;
 
-    public Vector2 SustainEndSize;
+    public Vector2 EndSize;
 
     private bool Initalized = false;
-    public void Init(TestStrum strum, float time, float susLength)
+    public void Init(Strum strum, float time, float _susLength)
     {
         Strum = strum;
         StrumTime = time;
-        SusLength = susLength;
+        SusLength = _susLength;
 
         if (Sprite.SpriteFrames.GetMeta("use_rotation").AsBool())
         {
@@ -63,22 +65,17 @@ public partial class TestNote : Node2D
 
     public override void _Ready()
     {
-        Conductor = GetNode<Node>("/root/Conductor");
         Visible = false;
 
         Sprite = GetNode<AnimatedSprite2D>("Sprite");
         Sustain = GetNode<Line2D>("Sustain");
         ClipRect = GetNode<Control>("Sustain/ClipRect");
         End = GetNode<Sprite2D>("Sustain/ClipRect/End");
-        SustainEndSize = End.Texture.GetSize();
+        EndSize = End.Texture.GetSize();
 
         ClipRect.ClipContents = true;
 
-        End.TextureChanged += () =>
-        {
-            SustainEndSize = End.Texture.GetSize();
-            GD.Print("BOO");
-        };
+        End.TextureChanged += () => { EndSize = End.Texture.GetSize(); };
     }
 
     public override void _Process(double delta)
@@ -86,7 +83,7 @@ public partial class TestNote : Node2D
         if (!Initalized) return;
 
         base._Process(delta);
-        float SongPosition = Conductor.Get("song_position").AsSingle();
+        float SongPosition = (float)Conductor.Instance.SongPosition;
         Vector2 pos = Vector2.Zero;
 
         pos.Y = (StrumTime - SongPosition) * (0.6f * (Strum.ScrollSpeed * 100 / 100));
@@ -96,8 +93,7 @@ public partial class TestNote : Node2D
 
         if ((StrumTime + SusLength) < (SongPosition - Strum.HitWindow) && !WasGoodHit) TooLate = true;
 
-        // 1st condition should be checking for (Strum.StrumLine.IsPlayer)
-        if (false && !Avoid && !WasGoodHit && StrumTime < SongPosition) GoodNoteHit();
+        if (Strum.StrumLine.IsPlayer && !Avoid && !WasGoodHit && StrumTime < SongPosition) GoodNoteHit();
 
         if (TooLate || (WasGoodHit && (StrumTime + SusLength) < SongPosition))
         {
@@ -105,13 +101,13 @@ public partial class TestNote : Node2D
             return;
         }
 
-        if (isSustainNote) UpdateSustain();
+        if (isSustainNote) UpdateSustain(SongPosition);
     }
 
-    public void UpdateSustain()
+    public void UpdateSustain(float SongPosition)
     {
         int PointCount = Sustain.Points.Length;
-        if (PointCount < 1) return;
+        if (PointCount < 2) return;
 
         float LengthPog = 0.6f * Mathf.Round(Strum.ScrollSpeed * 100) / 100;
 
@@ -119,7 +115,7 @@ public partial class TestNote : Node2D
         Vector2 SusPos = Sustain.GlobalPosition;
         if (WasGoodHit)
         {
-            Y_VAL = (SusLength + (StrumTime - Conductor.Get("song_position").AsSingle())) * LengthPog;
+            Y_VAL = (SusLength + (StrumTime - SongPosition)) * LengthPog;
             SusPos.Y = Strum.GlobalPosition.Y;
         }
         else
@@ -130,18 +126,18 @@ public partial class TestNote : Node2D
         
         Sustain.GlobalPosition = SusPos;
 
-        Y_VAL -= SustainEndSize.Y;
+        Y_VAL -= EndSize.Y;
         Vector2[] Points = Sustain.Points;
         Points[0] = Vector2.Zero;
         Points[^1] = new Vector2(0, Math.Max(Y_VAL, 0));
         Sustain.Points = Points;
 
         Vector2 clipPos = ClipRect.Position;
-        clipPos.X = -(SustainEndSize.X * 0.5f);
+        clipPos.X = -(EndSize.X * 0.5f);
         ClipRect.Position = clipPos;
-        ClipRect.Size = new Vector2(SustainEndSize.X, Y_VAL + SustainEndSize.Y);
+        ClipRect.Size = new Vector2(EndSize.X, Y_VAL + EndSize.Y);
 
-        End.Position = new Vector2(SustainEndSize.X * 0.5f, Y_VAL);
+        End.Position = new Vector2(EndSize.X * 0.5f, Y_VAL);
     }
 
     public void GoodNoteHit()
