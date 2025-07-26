@@ -1,10 +1,12 @@
+@tool
 class_name Character extends AnimatedSprite2D
 
 ## Path defining where the character's .tres animation is located
 const CHARACTER_PATH:String = &"res://Assets/Characters/%s/%s"
 
-var lastHit:float = -INF
-var holdTime:float = 0
+var hold_time:float = 0
+
+var sing_steps:float = 0.7
 
 ## The Node's Current Character to use for the .tres SpriteFrames
 var cur_character:String = "bf"
@@ -12,14 +14,16 @@ var cur_character:String = "bf"
 var scale_factor:float = 0.5
 
 ## Changes the character to a new one
-func change_character(new_character:String):	
+func change_character(new_character:String):
 	cur_character = new_character
 	load_animation()
 	centered = false
-	scale *= scale_factor
+	scale = Vector2.ONE * scale_factor
 
 func _ready() -> void:
 	change_character(cur_character)
+	
+	if (Engine.is_editor_hint()): return
 	dance()
 	Conductor.beat_hit.connect(beatHit)
 
@@ -145,19 +149,35 @@ func load_animation()->void:
 				texture_cache[rect_key] = animTexture
 			
 			sprite_frames.add_frame(anim, animTexture)
-
 #endregion
 
-# TODO:
-# Make Character dance when not playing notes, and make the Singing animations based off of V-Slice pls 🙏
+func direction_to_sing(dir:Strum.NoteDirection):
+	match dir % 4:
+		0: return "left"
+		1: return "down"
+		2: return "up"
+		3: return "right"
+
+# I don't really like how this works but it works for now??
+# someone please fix it if they have better ideas 🙏
+
+func sing(dir:Strum.NoteDirection):
+	var anim:String = direction_to_sing(dir)
+	hold_time = sing_steps * (Conductor.step_crochet * 0.001)
+	playAnim("sing"+anim.to_upper())
+
+func playAnim(anim:String):
+	offset = get_anim_offset(anim)
+	play(anim)
+
 func beatHit(_curBeat:int):
-	if !(lastHit + (Conductor.step_crochet) < Conductor.song_position): return
 	dance()
 
 func dance():
-	lastHit = Conductor.song_position
-	sing()
+	if hold_time > 0: return
+	playAnim("idle")
 
-func sing(anim:String = "idle"):
-	offset = get_anim_offset(anim)
-	play(anim)
+func _process(delta: float) -> void:
+	if hold_time > 0: hold_time -= delta
+
+func is_singing()->bool: return animation.begins_with("sing")

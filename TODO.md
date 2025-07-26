@@ -1,7 +1,8 @@
 # LJ Engine - Godot | Todo List
 
 ## Fix Issues
-*none for now*
+- [ ] Jack notes dissapear when close to the hit window, but you don't actually hit them??
+- [ ] FPS is lower when notes are stored in an array but not loaded??
 
 ### Basic Features
 

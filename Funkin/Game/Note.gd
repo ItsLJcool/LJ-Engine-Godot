@@ -101,7 +101,7 @@ func _process(_delta: float) -> void:
 	update_note()
 	
 	if canBeHit and wasGoodHit and !tooLate: 
-		strum.strumLine.play_character_animation("sing"+Strum.direction_to_string(strum.direction).to_upper())
+		strum.strumLine.play_character_sing(strum.direction)
 
 # Ok reference to everyone here:
 # Hitting a sustain like normal but releasing it early should cause it to never be hittable again.
@@ -134,26 +134,24 @@ func update_sustain(lengthPog:float)->void: ## Updates the Length of the sustain
 	var points_count:int = sustain.get_point_count()
 	if points_count < 2: return
 
-	var last_point = sustain.points[-1];
 	var end_size:Vector2 = end.texture.get_size()
 	
 	var y_val:float = 0;
 	if wasGoodHit:
 		y_val = ((susLength + (strumTime - Conductor.song_position)) * lengthPog);
-		sustain.position.y = -(position.y - strum.position.y);
+		sustain.global_position.y = strum.global_position.y
 	else:
 		y_val = (susLength * lengthPog);
-		sustain.position.y = 0;
+		sustain.global_position.y = global_position.y
 	
 	y_val -= end_size.y
 	
-	last_point.y = max(y_val, 0)
+	sustain.points[0] = Vector2.ZERO
+	sustain.points[-1] = Vector2(0, max(y_val, 0))
 	
-	sustain.points[-1] = last_point
-	
-	clipRect.position.x = -(end_size.x * 0.5);
+	clipRect.position.x = -(end_size.x * 0.5)
 	clipRect.size.x = end_size.x
 	clipRect.size.y = y_val + end_size.y
 	
-	end.position.x = end_size.x * 0.5;
-	end.position.y = last_point.y + (end_size.y * 0.5);
+	end.position.x = end_size.x * 0.5
+	end.position.y = y_val

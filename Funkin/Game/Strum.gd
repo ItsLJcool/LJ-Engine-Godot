@@ -71,10 +71,30 @@ const INPUT_NAME = &"NOTE_%s" ## For inputs, using the Keybind names
 ## Converts Enum to string value.
 static func direction_to_string(dir:NoteDirection = NoteDirection.LEFT)->String: return NoteDirection.keys()[dir].to_lower()
 
-# Idea: Use a 1D Array and store information as slices. i.e every 3 index we identify for `d`, `t`, and `l`.
-var notes_to_spawn:Array[Dictionary] = [] ## Container for preloading notes.
-## Used to append information to a Buffer to then spawn a note when it's time.
-func preload_note(time:float, susLength:float)->void: notes_to_spawn.push_back({ "t": time, "l": susLength })
+## Packed information of time and susLength. The game will assume the PackedArray is sorted from lowest to highest
+var notes_to_spawn:PackedFloat32Array = PackedFloat32Array()
+func preload_note(t:float, l:float) -> void:
+	notes_to_spawn.push_back(t)
+	notes_to_spawn.push_back(l)
+
+func sort_preload_notes():
+	var count = notes_to_spawn.size() * 0.5
+	var pairs:Array = []
+	
+	for i in range(count):
+		var t = notes_to_spawn[i * 2]
+		var l = notes_to_spawn[i * 2 + 1]
+		pairs.append({ "t": t, "l": l })  # Could also be a custom class
+	
+	pairs.sort_custom(func(a, b): return a["t"] < b["t"])
+
+	# Rebuild the PackedFloat32Array
+	var sorted_flat:PackedFloat32Array = PackedFloat32Array()
+	for p in pairs:
+		sorted_flat.push_back(p["t"])
+		sorted_flat.push_back(p["l"])
+	
+	notes_to_spawn = sorted_flat
 
 # Handling how notes are added and removed from the Strum
 const note_blueprint := preload("res://Funkin/Game/Note.tscn") ## The Note Scene that is used to dynamically create notes
@@ -92,13 +112,14 @@ func loop_for_notes(fiction:Callable) -> void: ## Simple utility function to qui
 # Now we take the time to render
 func _process(_delta: float) -> void:
 	if (Engine.is_editor_hint()): return
-	var idx = 0
-	while(idx < notes_to_spawn.size()):
-		var note = notes_to_spawn[idx]
-		if (note.t - Conductor.song_position) <= render_limit: 
-			spawn_note(note.t, note.l).render = true
-			notes_to_spawn.remove_at(idx)
-		idx += 1;
+	
+	if notes_to_spawn.size() >= 2:
+		var t = notes_to_spawn[0] # Look at our current buffer
+		var l = notes_to_spawn[1] # Look ahead for susLength
+		if (t - Conductor.song_position) <= render_limit: # check if note should be rendered
+			spawn_note(t, l).render = true
+			notes_to_spawn.remove_at(0) # remove t
+			notes_to_spawn.remove_at(0) # remove l (same index again)
 
 # _input might be annoying?? Jack notes and some notes die when they should huh.
 func _input(event:InputEvent):

@@ -19,7 +19,6 @@ points = PackedVector2Array(0, 0, 0, 200)
 width = 50.0
 texture = ExtResource("3_kutdp")
 texture_mode = 1
-joint_mode = 2
 
 [node name="ClipRect" type="Control" parent="Sustain"]
 layout_mode = 3

@@ -9,10 +9,10 @@ var bpm:float = 100:
 		step_crochet = crochet / 4
 
 ## beats in milliseconds
-var crochet:float = ((60 / bpm) * 1000) # beats in ms
+var crochet:float = ((60 / bpm) * 1000)
 
 ## steps in milliseconds
-var step_crochet:float = crochet / 4 # steps in ms
+var step_crochet:float = crochet / 4
 
 ## the current position in the song before it is updated
 var _old_song_position:float = 0

@@ -88,4 +88,9 @@ func remove_character(_char:Character)->bool: ## Removes the Character from the 
 func play_character_animation(anim:String):
 	for _char:Character in characters:
 		if !_char is Character: continue
-		_char.sing(anim)
+		_char.playAnim(anim)
+
+func play_character_sing(dir:Strum.NoteDirection):
+	for _char:Character in characters:
+		if !_char is Character: continue
+		_char.sing(dir)

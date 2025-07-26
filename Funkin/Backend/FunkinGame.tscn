@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dwwj0wky3eraf"]
+[gd_scene load_steps=5 format=3 uid="uid://dwwj0wky3eraf"]
 
 [ext_resource type="Script" uid="uid://rgbh5x7blv27" path="res://Funkin/Backend/FunkinGame.gd" id="1_gak6w"]
 [ext_resource type="PackedScene" uid="uid://b7hgmg8e8ia7b" path="res://Funkin/Backend/Internal/SoundTray.tscn" id="2_rfsvv"]
 [ext_resource type="PackedScene" uid="uid://dy7tpi7e47aww" path="res://Funkin/Backend/Internal/FPS.tscn" id="2_yja8m"]
+[ext_resource type="PackedScene" uid="uid://wd40151ros2u" path="res://Funkin/Backend/Transitions/BaseTransition.tscn" id="4_jhou3"]
 
 [node name="FunkinGame" type="Node"]
 script = ExtResource("1_gak6w")
@@ -15,6 +16,10 @@ position = Vector2(640, 360)
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="Information" type="CanvasLayer" parent="."]
+
+[node name="BaseTransition" parent="Information" instance=ExtResource("4_jhou3")]
+offset_right = -1280.0
+offset_bottom = -720.0
 
 [node name="SoundTray" parent="Information" instance=ExtResource("2_rfsvv")]
 position = Vector2(640, -100)
