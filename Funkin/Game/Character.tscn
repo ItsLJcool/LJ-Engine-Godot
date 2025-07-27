@@ -520,5 +520,10 @@ animations = [{
 [node name="Character" type="AnimatedSprite2D"]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_m6m0k")
+animation = &"idle"
 centered = false
 script = ExtResource("2_crvj2")
+
+[node name="CameraPosition" type="Marker2D" parent="."]
+position = Vector2(-36, 118)
+gizmo_extents = 50.0

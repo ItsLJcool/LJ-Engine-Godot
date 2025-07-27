@@ -15,7 +15,13 @@ config/description="Fnf Engine made easy in Godot!"
 config/version="0.0.1"
 run/main_scene="uid://dwwj0wky3eraf"
 config/features=PackedStringArray("4.4")
-config/icon="res://icon.png"
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/show_image=false
+boot_splash/fullsize=false
+boot_splash/use_filter=false
+config/icon="uid://cx5wmpc8ki0yp"
+config/windows_native_icon="res://icon.ico"
+run/funkin_main_scene="res://Funkin/Scenes/BootSplash.tscn"
 
 [autoload]
 
@@ -27,6 +33,10 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="viewport"
 window/vsync/vsync_mode=0
+
+[engine]
+
+default_bg_color=Color(0, 0, 0, 1)
 
 [file_customization]
 

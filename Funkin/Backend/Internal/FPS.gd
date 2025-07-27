@@ -4,9 +4,13 @@ var normal_color:Color = Color(1, 1, 1)
 var below_color:Color = Color(1, 0, 0)
 var average_color:Color = Color(1, 1, 0)
 
+var textDisplay:String = " FPS: %d \n VRAM: %s \n Memory: %s \n\n Godot %s"
+
 var time:float = 0
 
-var textDisplay:String = " FPS: %d \n VRAM: %s \n Memory: %s \n\n Godot %s"
+func _ready():
+	set_physics_process(false)
+
 func _process(delta:float):
 	var fps = Engine.get_frames_per_second()
 	var texMem = Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)

@@ -1,12 +1,20 @@
 @tool
 class_name Character extends AnimatedSprite2D
 
+const CHARACTER_SCENE:PackedScene = preload("res://Funkin/Game/Character.tscn")
+static func create(char_name:String = "bf")->Character:
+	var new_char:Character = CHARACTER_SCENE.instantiate()
+	new_char.change_character(char_name)
+	return new_char
+
+@onready var camera_position:Marker2D = $CameraPosition
+
 ## Path defining where the character's .tres animation is located
 const CHARACTER_PATH:String = &"res://Assets/Characters/%s/%s"
 
 var hold_time:float = 0
 
-var sing_steps:float = 0.7
+var sing_steps:float = 4
 
 ## The Node's Current Character to use for the .tres SpriteFrames
 var cur_character:String = "bf"
@@ -21,9 +29,12 @@ func change_character(new_character:String):
 	scale = Vector2.ONE * scale_factor
 
 func _ready() -> void:
-	change_character(cur_character)
+	print(camera_position)
+	set_physics_process(false)
 	
 	if (Engine.is_editor_hint()): return
+	change_character(cur_character)
+	
 	dance()
 	Conductor.beat_hit.connect(beatHit)
 
@@ -174,7 +185,7 @@ func beatHit(_curBeat:int):
 	dance()
 
 func dance():
-	if hold_time > 0: return
+	if hold_time > 0 or is_playing(): return
 	playAnim("idle")
 
 func _process(delta: float) -> void:

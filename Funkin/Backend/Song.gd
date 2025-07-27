@@ -8,6 +8,9 @@ var isReady:bool = false; ## If the Class is ready to play the song.
 static var songsPath:String = &"res://Assets/Songs" ## Path for the Songs Folder
 
 func _ready()->void:
+	set_process(false)
+	set_physics_process(false)
+	
 	Conductor.song_start.connect(start)
 	add_child(vocal_player)
 
@@ -67,7 +70,8 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 		var notes = jsonStrumLine[idx].notes
 		if !notes: continue
 		
-		for note in notes:
-			strumline.add_note(note.id, note.time, note.sLen)
-	
+		for note:Dictionary in notes: strumline.add_note(note.id, note.time, note.sLen)
+		
+		# Sort the notes!!!!!
+		strumline.loop_for_strums(func(strum:Strum): strum.sort_preload_notes())
 	return true

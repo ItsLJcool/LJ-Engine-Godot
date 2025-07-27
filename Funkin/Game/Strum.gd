@@ -60,7 +60,7 @@ enum InputType {
 #endregion
 
 func _ready():
-	pass
+	set_physics_process(false)
 
 func init()->void: ## Initalizes the strum 
 	if !sprite: return
@@ -97,7 +97,7 @@ func sort_preload_notes():
 	notes_to_spawn = sorted_flat
 
 # Handling how notes are added and removed from the Strum
-const note_blueprint := preload("res://Funkin/Game/Note.tscn") ## The Note Scene that is used to dynamically create notes
+const note_blueprint:PackedScene = preload("res://Funkin/Game/Note.tscn") ## The Note Scene that is used to dynamically create notes
 func spawn_note(time:float, sustainLength:float)->Note: ## Physically Spawns the note in the Notes Node2D. Returns the newly created instance
 	var note = note_blueprint.instantiate()
 	notesGroup.add_child(note)
@@ -109,7 +109,7 @@ func loop_for_notes(fiction:Callable) -> void: ## Simple utility function to qui
 		if !i is Note: continue
 		fiction.call(i)
 
-# Now we take the time to render
+# da rendoring toime!
 func _process(_delta: float) -> void:
 	if (Engine.is_editor_hint()): return
 	
@@ -121,17 +121,16 @@ func _process(_delta: float) -> void:
 			notes_to_spawn.remove_at(0) # remove t
 			notes_to_spawn.remove_at(0) # remove l (same index again)
 
-# _input might be annoying?? Jack notes and some notes die when they should huh.
 func _input(event:InputEvent):
 	if !strumLine.isPlayer or Engine.is_editor_hint(): return
 	
-	if event is InputEventMouse: return
+	if event is not InputEventKey: return
 	
 	var dir = direction_to_string(direction)
 	var action = INPUT_NAME % dir
 	
 	if Input.is_action_just_pressed(action):
-		loop_for_notes(func(note:Note): if note.canBeHit and !note.wasGoodHit: note.goodNoteHit() )
+		check_note_press()
 		
 		onInput.emit(direction, InputType.JustPressed)
 	
@@ -151,3 +150,11 @@ func _input(event:InputEvent):
 		)
 		
 		onInput.emit(direction, InputType.JustReleased)
+
+func check_note_press()->void:
+	var sorted_notes := notesGroup.get_children().filter(func(note:Note): return (note is Note) and (note.canBeHit and !note.wasGoodHit))
+	
+	if sorted_notes.is_empty(): return
+	
+	sorted_notes.sort_custom(func(a:Note, b:Note): return a.strumTime < b.strumTime)
+	sorted_notes[0].goodNoteHit()

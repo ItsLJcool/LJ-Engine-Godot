@@ -35,6 +35,8 @@ const strum_blueprint := preload("res://Funkin/Game/Strum.tscn")
 #endregion
 
 func _ready()->void:
+	set_physics_process(false)
+	
 	refresh_strums(true)
 	self.position.y = 75
 
@@ -46,8 +48,6 @@ func add_note(dir:Strum.NoteDirection, time:float, susLength:float)->void:
 
 func _process(_delta: float) -> void:
 	pass
-	#if isPlayer:
-		#loop_for_strums(func(strum:Strum): on_input(strum))
 
 func refresh_strums(_queue_free:bool = false)->void: ## Re-evaluates positional data, and if needed to, destroy's the strums and reinitalizes them.
 	if !strumsGroup: return

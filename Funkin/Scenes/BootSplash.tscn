@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://cxw8acbpl56jx"]
+
+[ext_resource type="Script" uid="uid://bd3wm7geku82u" path="res://Funkin/Scenes/BootSplash.gd" id="1_6js50"]
+[ext_resource type="Texture2D" uid="uid://cx5wmpc8ki0yp" path="res://icon.png" id="2_t38pd"]
+[ext_resource type="FontFile" uid="uid://bdh15iqse6ylh" path="res://Assets/Fonts/Funkin.ttf" id="3_evx81"]
+
+[node name="BootSplash" type="Node2D"]
+script = ExtResource("1_6js50")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(640, 360)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_t38pd")
+
+[node name="Text" type="RichTextLabel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -173.5
+offset_top = -20.0
+offset_right = 173.5
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/outline_size = 10
+theme_override_fonts/normal_font = ExtResource("3_evx81")
+theme_override_font_sizes/normal_font_size = 25
+text = "Temporary Boot splash 🔥"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0, 0, 0, 1)

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b7hgmg8e8ia7b"]
+[gd_scene load_steps=6 format=3 uid="uid://b7hgmg8e8ia7b"]
 
 [ext_resource type="Script" uid="uid://v8ve423fylap" path="res://Funkin/Backend/Internal/SoundTray.gd" id="1_5mtln"]
 [ext_resource type="Texture2D" uid="uid://bffjq0d8d526s" path="res://Assets/Images/soundtray/volumebox.png" id="2_n75nl"]
-[ext_resource type="Texture2D" uid="uid://b8hh1q03r3hwe" path="res://Assets/Images/soundtray/bars.png" id="3_edjxd"]
+[ext_resource type="Texture2D" uid="uid://b53svvwjxoyrs" path="res://Assets/Images/soundtray/bars_10.png" id="3_n75nl"]
 [ext_resource type="AudioStream" uid="uid://bckxp16b77dvb" path="res://Assets/Sounds/soundtray/Voldown.ogg" id="4_n75nl"]
+[ext_resource type="AudioStream" uid="uid://dm033r828kwcu" path="res://Assets/Sounds/soundtray/VolMAX.ogg" id="5_edjxd"]
 
 [node name="SoundTray" type="Node2D"]
 script = ExtResource("1_5mtln")
@@ -16,7 +17,11 @@ layout_mode = 3
 anchors_preset = 0
 
 [node name="BarVolume" type="Sprite2D" parent="ClipRect"]
-texture = ExtResource("3_edjxd")
+texture = ExtResource("3_n75nl")
+centered = false
+
+[node name="BarVolume_Behind" type="Sprite2D" parent="ClipRect"]
+texture = ExtResource("3_n75nl")
 centered = false
 
 [node name="HideTimer" type="Timer" parent="."]
@@ -29,4 +34,4 @@ stream = ExtResource("4_n75nl")
 stream = ExtResource("4_n75nl")
 
 [node name="VolumeMAX" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("4_n75nl")
+stream = ExtResource("5_edjxd")

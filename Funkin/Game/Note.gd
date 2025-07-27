@@ -78,6 +78,8 @@ func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing t
 	clipRect.size = Vector2.ONE * sustain.width
 
 func _ready():
+	set_physics_process(false)
+	
 	clipRect.clip_contents = true
 	self.position.y = -5000
 	

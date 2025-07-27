@@ -6,7 +6,9 @@ extends Node2D
 var song_name:String = "last-embed"
 
 func _ready() -> void:
-	var testCharacter = Character.new()
+	set_physics_process(false)
+	
+	var testCharacter = Character.create()
 	add_child(testCharacter)
 	player.add_character(testCharacter)
 	
