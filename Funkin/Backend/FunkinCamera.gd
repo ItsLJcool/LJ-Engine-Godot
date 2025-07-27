@@ -29,7 +29,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if !is_close_vec(zoom, Vector2(zoom_val, zoom_val), 0.00001): queue_redraw()
 	position = position.lerp(focus_marker.position, (1.0 - pow(1.0 - follow_lerp, delta * 60)))
-	zoom = zoom.lerp(Vector2(zoom_val, zoom_val), clamp(zoom_lerp * delta, 0, 1))
+	zoom = zoom.lerp(Vector2(zoom_val, zoom_val), (1.0 - pow(1.0 - zoom_lerp, delta * 60)))
 
 func is_close_vec(a: Vector2, b: Vector2, tolerance: float = 0.01) -> bool: return a.distance_to(b) <= tolerance
 
@@ -40,5 +40,5 @@ var bump_intensity:float = 0.015
 var bump_interval:int = 4
 
 func beat_hit(cur_beat:int):
-	if !do_bumping or (cur_beat % bump_interval != 0): return
+	if cur_beat == 0 or !do_bumping or (cur_beat % bump_interval != 0): return
 	zoom += Vector2(bump_intensity * bump_strength, bump_intensity * bump_strength)

@@ -81,7 +81,7 @@ static func reset_camera_position():
 	CAMERA_FOCUS.position = window.size * 0.5
 	camera.follow(CAMERA_FOCUS)
 	camera.snap_to_focus()
-	camera.zoom_lerp = 1
+	camera.zoom_val = 1
 	camera.snap_zoom()
 
 #endregion
