@@ -9,7 +9,6 @@ static var songsPath:String = &"res://Assets/Songs" ## Path for the Songs Folder
 
 func _ready()->void:
 	set_process(false)
-	set_physics_process(false)
 	
 	Conductor.song_start.connect(start)
 	add_child(vocal_player)

@@ -29,11 +29,16 @@ static var INFORMATION_LAYER:CanvasLayer:
 	get: return instance.__INFORMATION_LAYER
 	set(value): return
 
+@onready var __CAMERA_FOCUS:Marker2D = $CameraFocus
+static var CAMERA_FOCUS:Marker2D:
+	get: return instance.__CAMERA_FOCUS
+	set(value): return
+
 #endregion
 
 #region Usefull variables
-@onready var __camera:Camera2D = $Camera 
-static var camera:Camera2D: ## This is your camera that the FunkinGame will render to.
+@onready var __camera:FunkinCamera = $FunkinCamera 
+static var camera:FunkinCamera: ## This is your camera that the FunkinGame will render to.
 	get: return instance.__camera
 	set(value): instance.camera = value
 
@@ -46,11 +51,6 @@ static var SoundTray:Node2D:
 static var TransitionNode:BaseTransition:
 	get: return instance.__transition
 	set(value): instance.__transition = value
-
-@onready var __bg:ColorRect = $Background
-static var Background:ColorRect:
-	get: return instance.__bg
-	set(value): instance.__bg = value
 
 #endregion
 
@@ -76,6 +76,14 @@ static func remove_UI(node:Node): UI_LAYER.remove_child(node) ## Removes your No
 ## 1 Argument Passable function parameter to quickly loop through every object in the UI Layer
 static func loop_for_ui(fiction:Callable): for node:Node in UI_LAYER.get_children(): fiction.call(node)
 
+
+static func reset_camera_position():
+	CAMERA_FOCUS.position = window.size * 0.5
+	camera.follow(CAMERA_FOCUS)
+	camera.snap_to_focus()
+	camera.zoom_lerp = 1
+	camera.snap_zoom()
+
 #endregion
 
 var STARTING_SCENE:String = ProjectSettings.get_setting("application/run/funkin_main_scene", "res://Funkin/Backend/Internal/BackupScene.tscn")
@@ -93,10 +101,6 @@ func _ready():
 	call_all_function(self, disable_physics)
 	get_tree().node_added.connect(disable_physics)
 	
-	Background.color = ProjectSettings.get_setting("engine/default_bg_color", Color.BLACK)
-	
-	# So the camera is always in the center on start-up no matter what
-	camera.position = window.size * 0.5
 	SoundTray.position.x = window.size.x * 0.5
 	SoundTray.position.y = -100
 	
@@ -116,9 +120,10 @@ func call_all_function(node:Node, fiction:Callable):
 		fiction.call(child)
 		call_all_function(child, fiction)
 
+static func quick_wait(): for i in range(0, 3): await instance.get_tree().process_frame
+
 ## Change states from one Scene to another without thinking! Returns false if failed to load or properly initalize the New Scene.
 static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool = false)->bool:
-	await instance.get_tree().process_frame
 	var new_scene:Node = packed.instantiate()
 	if !new_scene: return false
 	
@@ -128,11 +133,14 @@ static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool
 		TransitionNode.transition_in()
 		await TransitionNode.transition_complete
 	
+	camera.do_bumping = false
+	reset_camera_position()
+	if !skip_out: TransitionNode.prepare_transition(true)
+	
 	# Once we are done with the state, kill everyone and then get the new scene information
 	loop_for_game(func(node:Node): node.queue_free()) # /kill @e[type="Game:Node2D"]
 	loop_for_ui(func(node:Node): node.queue_free()) # /kill @e[type="UILayer:Node2D"]
 	
-	TransitionNode.prepare_transition(false)
 	add(new_scene)
 	
 	# If the scene has a Layer the same name as our UILayer, then reparent them to this state's UILayer for formality
@@ -142,7 +150,7 @@ static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool
 		uiLayer.queue_free()
 	
 	# Wait for some time to then do the transition.
-	for i in range(0, 3): await instance.get_tree().process_frame
+	await quick_wait()
 	
 	if !skip_out:
 		TransitionNode.transition_out()

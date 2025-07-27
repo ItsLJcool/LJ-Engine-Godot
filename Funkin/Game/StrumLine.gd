@@ -35,8 +35,6 @@ const strum_blueprint := preload("res://Funkin/Game/Strum.tscn")
 #endregion
 
 func _ready()->void:
-	set_physics_process(false)
-	
 	refresh_strums(true)
 	self.position.y = 75
 

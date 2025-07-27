@@ -60,7 +60,7 @@ enum InputType {
 #endregion
 
 func _ready():
-	set_physics_process(false)
+	pass
 
 func init()->void: ## Initalizes the strum 
 	if !sprite: return

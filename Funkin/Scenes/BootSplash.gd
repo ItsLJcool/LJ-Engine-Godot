@@ -16,8 +16,8 @@ func _ready() -> void:
 	top_color.size = FunkinGame.window.size
 
 func scene_ready():
-	await get_tree().create_timer(0.5).timeout
-	await create_tween().tween_property(top_color, "self_modulate:a", 0, 1).finished
+	await get_tree().create_timer(0.25).timeout
+	await create_tween().tween_property(top_color, "self_modulate:a", 0, 0.5).finished
 	await get_tree().create_timer(1.5).timeout
 	finished()
 
@@ -25,7 +25,7 @@ var leaving:bool = false
 func finished():
 	if leaving: return
 	leaving = true
-	await create_tween().tween_property(top_color, "self_modulate:a", 1, 1).finished
+	await create_tween().tween_property(top_color, "self_modulate:a", 1, 0.5).finished
 	FunkinGame.switch_state(NEXT_STATE, true)
 
 func _input(event: InputEvent) -> void:

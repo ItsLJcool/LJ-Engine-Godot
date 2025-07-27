@@ -9,7 +9,7 @@ var textDisplay:String = " FPS: %d \n VRAM: %s \n Memory: %s \n\n Godot %s"
 var time:float = 0
 
 func _ready():
-	set_physics_process(false)
+	pass
 
 func _process(delta:float):
 	var fps = Engine.get_frames_per_second()

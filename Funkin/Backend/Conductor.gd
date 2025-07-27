@@ -53,8 +53,6 @@ var audio_stream:AudioStream = AudioStream.new():
 		audio_player.stream = audio_stream;
 
 func _ready() -> void:
-	set_physics_process(false)
-	
 	audio_player.name = "SongPlayer"
 	add_child(audio_player)
 	audio_player.bus = "Music"

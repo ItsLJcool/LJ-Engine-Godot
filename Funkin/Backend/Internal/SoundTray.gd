@@ -67,7 +67,6 @@ func _ready()->void:
 		queue_free()
 		return
 	instance = self
-	set_physics_process(false)
 	
 	USE_FLOAT_PRECISION = USE_FLOAT_PRECISION # yes this is stupid, no im too lazy to fix
 	

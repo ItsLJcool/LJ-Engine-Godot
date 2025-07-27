@@ -8,7 +8,6 @@ signal transition_complete(out:bool)
 func game_ready():
 	visible = true
 	set_process(false)
-	set_physics_process(false)
 	prepare_transition(false)
 
 func prepare_transition(out:bool = false):

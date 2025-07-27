@@ -29,12 +29,9 @@ func change_character(new_character:String):
 	scale = Vector2.ONE * scale_factor
 
 func _ready() -> void:
-	print(camera_position)
-	set_physics_process(false)
-	
-	if (Engine.is_editor_hint()): return
-	change_character(cur_character)
-	
+	if (Engine.is_editor_hint()):
+		change_character(cur_character)
+		return
 	dance()
 	Conductor.beat_hit.connect(beatHit)
 
