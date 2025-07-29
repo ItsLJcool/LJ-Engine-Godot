@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://dedfx4sf75b8d"]
+
+[ext_resource type="Script" uid="uid://8q3svkabgji8" path="res://Funkin/Game/Stages/STAGE MANAGER.gd" id="1_3qqs4"]
+
+[node name="Manager" type="Node"]
+script = ExtResource("1_3qqs4")
+
+[node name="CameraStartPos" type="Marker2D" parent="."]
+
+[node name="CharacterPositions" type="Node" parent="."]
+
+[node name="Behind" type="Node" parent="."]
+
+[node name="Characters" type="Node" parent="."]
+
+[node name="Front" type="Node" parent="."]

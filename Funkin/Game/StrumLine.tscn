@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://db4uwbp0geoiv" path="res://Funkin/Game/StrumLine.gd" id="1_xe53f"]
 
 [node name="StrumLine" type="Node2D"]
-position = Vector2(244.8, 75)
+position = Vector2(152, 75)
 script = ExtResource("1_xe53f")
 
 [node name="Strums" type="Node2D" parent="."]

@@ -26,7 +26,7 @@ static var USE_FLOAT_PRECISION:bool = false:
 			instance.volume_bar_behind.self_modulate.a = 0.5
 
 static var STEP_MAX:int = 10
-var current_step:int = floori(STEP_MAX * 0.5):
+var current_step:int = floori(STEP_MAX * 0.5)+1:
 	set(value):
 		current_step = clamp(value, 0, STEP_MAX)
 		if USE_FLOAT_PRECISION: return

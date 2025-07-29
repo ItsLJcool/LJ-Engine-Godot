@@ -80,6 +80,7 @@ func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing t
 func _ready():
 	clipRect.clip_contents = true
 	self.position.y = -5000
+	sustain.modulate.a = 0.6
 	
 func deleteNote(): ## Simply just destroys the note
 	self.queue_free()
@@ -133,7 +134,7 @@ func update_note()->void: ## Call this to update position progression, and if th
 func update_sustain(lengthPog:float)->void: ## Updates the Length of the sustain when hitting or not hitting.
 	var points_count:int = sustain.get_point_count()
 	if points_count < 2: return
-
+	
 	var end_size:Vector2 = end.texture.get_size()
 	
 	var y_val:float = 0;
@@ -154,4 +155,4 @@ func update_sustain(lengthPog:float)->void: ## Updates the Length of the sustain
 	clipRect.size.y = y_val + end_size.y
 	
 	end.position.x = end_size.x * 0.5
-	end.position.y = y_val
+	end.position.y = y_val + (end_size.y * 0.5)

@@ -21,6 +21,8 @@ const MAX_STRUMS:int = 4 ## Maximum Value of your Strums in a container, somewha
 		StrumsAmount = value
 		refresh_strums()
 
+@export var strum_scale:float = 0.7
+
 @export var padding:float = 112: ## Padding between each Strum
 	set(value):
 		padding = value
@@ -56,15 +58,18 @@ func refresh_strums(_queue_free:bool = false)->void: ## Re-evaluates positional 
 			strum.name = str(idx)
 			strum.strumLine = self
 			strum.direction = idx
+			strum.scale = Vector2(strum_scale, strum_scale)
 			strumsGroup.add_child(strum)
 			strum.init()
 	
+	var real_padding = padding * strum_scale
+	
 	var total = strumsGroup.get_children().size()
-	var offset = (padding * total) * 0.5
+	var offset = (real_padding * total) * 0.5
 	
 	# 1280 needs to be the width of the window. Hardcoded for now
 	self.global_position.x = lerpf(offset, (1280 - offset), StrumLinePos)
-	for i in strumsGroup.get_children(): i.position.x = (((padding) * i.direction) + (padding * 0.5)) - offset
+	for i in strumsGroup.get_children(): i.position.x = (((real_padding) * i.direction) + (real_padding * 0.5)) - offset
 
 func loop_for_strums(fiction:Callable) -> void: ## Basic Util for looping through each Strum
 	for i:Strum in strumsGroup.get_children():

@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://csdbb2p7ar10k"]
+
+[ext_resource type="Script" uid="uid://bkklrtdf1aroc" path="res://Funkin/Scenes/PlayState.gd" id="1_ndidf"]
+[ext_resource type="PackedScene" uid="uid://mj02c62c72tl" path="res://Funkin/Game/StrumLine.tscn" id="2_k43pl"]
+[ext_resource type="PackedScene" uid="uid://dedfx4sf75b8d" path="res://Funkin/Game/Stages/STAGE MANAGER.tscn" id="3_k43pl"]
+
+[node name="PlayState" type="Node2D"]
+script = ExtResource("1_ndidf")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="Player" parent="UILayer" instance=ExtResource("2_k43pl")]
+position = Vector2(1035.2, 75)
+StrumLinePos = 0.975
+padding = 160.0
+isPlayer = true
+
+[node name="Cpu" parent="UILayer" instance=ExtResource("2_k43pl")]
+position = Vector2(244.8, 75)
+padding = 160.0
+
+[node name="Stage Manager" parent="." instance=ExtResource("3_k43pl")]

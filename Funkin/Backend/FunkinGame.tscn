@@ -9,11 +9,10 @@
 [node name="FunkinGame" type="Node"]
 script = ExtResource("1_gak6w")
 
-[node name="CameraFocus" type="Marker2D" parent="."]
-
 [node name="FunkinCamera" type="Camera2D" parent="."]
-position = Vector2(640, 360)
 script = ExtResource("2_s7a27")
+
+[node name="CameraFocus" type="Marker2D" parent="."]
 
 [node name="Static Game" type="Node2D" parent="."]
 
@@ -26,10 +25,8 @@ layer = 0
 
 [node name="BaseTransition" parent="Information" instance=ExtResource("4_jhou3")]
 visible = false
-offset_right = -1280.0
-offset_bottom = -720.0
 
 [node name="SoundTray" parent="Information" instance=ExtResource("2_rfsvv")]
-position = Vector2(640, -100)
+position = Vector2(640, -250)
 
 [node name="FPS" parent="Information" instance=ExtResource("2_yja8m")]

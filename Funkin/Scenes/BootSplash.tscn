@@ -7,32 +7,49 @@
 [node name="BootSplash" type="Node2D"]
 script = ExtResource("1_6js50")
 
-[node name="Icon" type="Sprite2D" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="EndIt" type="Control" parent="UILayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Icon" type="Sprite2D" parent="UILayer/EndIt"]
 position = Vector2(640, 360)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_t38pd")
 
-[node name="Text" type="RichTextLabel" parent="."]
+[node name="Text" type="RichTextLabel" parent="UILayer/EndIt"]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -173.5
-offset_top = -20.0
-offset_right = 173.5
-offset_bottom = 20.0
+offset_left = -198.5
+offset_top = 111.0
+offset_right = 198.5
+offset_bottom = 171.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/outline_size = 10
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme_override_constants/outline_size = 8
 theme_override_fonts/normal_font = ExtResource("3_evx81")
 theme_override_font_sizes/normal_font_size = 25
-text = "Temporary Boot splash 🔥"
+text = "Temporary Boot Splash"
 fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="."]
-size_flags_horizontal = 4
-size_flags_vertical = 4
+[node name="ColorRect" type="ColorRect" parent="UILayer/EndIt"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0, 0, 0, 1)

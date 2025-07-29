@@ -78,13 +78,15 @@ static func loop_for_ui(fiction:Callable): for node:Node in UI_LAYER.get_childre
 
 
 static func reset_camera_position():
-	CAMERA_FOCUS.position = window.size * 0.5
+	CAMERA_FOCUS.position = Vector2.ZERO
 	camera.follow(CAMERA_FOCUS)
 	camera.snap_to_focus()
 	camera.zoom_val = 1
 	camera.snap_zoom()
 
 #endregion
+
+static var DEFAULT_WINDOW_SIZE:Vector2 = Vector2(ProjectSettings.get_setting("display/window/size/viewport_width", 1280), ProjectSettings.get_setting("display/window/size/viewport_height", 720))
 
 var STARTING_SCENE:String = ProjectSettings.get_setting("application/run/funkin_main_scene", "res://Funkin/Backend/Internal/BackupScene.tscn")
 
@@ -107,6 +109,7 @@ func _ready():
 	on_game_ready.emit()
 	call_all_method(self, "game_ready")
 	
+	reset_camera_position()
 	# Initalize starting scene.
 	switch_state(load(STARTING_SCENE), true, true)
 
@@ -120,8 +123,6 @@ func call_all_function(node:Node, fiction:Callable):
 		fiction.call(child)
 		call_all_function(child, fiction)
 
-static func quick_wait(): for i in range(0, 3): await instance.get_tree().process_frame
-
 ## Change states from one Scene to another without thinking! Returns false if failed to load or properly initalize the New Scene.
 static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool = false)->bool:
 	var new_scene:Node = packed.instantiate()
@@ -130,12 +131,11 @@ static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool
 	new_scene.set_process(false)
 	
 	if !skip_in:
-		TransitionNode.transition_in()
+		TransitionNode.do_transition(false)
 		await TransitionNode.transition_complete
-	
+	else: TransitionNode.prepare_transition(true)
 	camera.do_bumping = false
 	reset_camera_position()
-	if !skip_out: TransitionNode.prepare_transition(true)
 	
 	# Once we are done with the state, kill everyone and then get the new scene information
 	loop_for_game(func(node:Node): node.queue_free()) # /kill @e[type="Game:Node2D"]
@@ -149,13 +149,10 @@ static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool
 		for node in uiLayer.get_children(): node.reparent(UI_LAYER)
 		uiLayer.queue_free()
 	
-	# Wait for some time to then do the transition.
-	await quick_wait()
-	
 	if !skip_out:
-		TransitionNode.transition_out()
+		TransitionNode.do_transition(true)
 		await TransitionNode.transition_complete
-	
+	else:  TransitionNode.prepare_transition(false)
 	new_scene.set_process(true)
 	
 	if new_scene.has_method("scene_ready"): new_scene.call("scene_ready")

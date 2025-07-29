@@ -1,13 +1,25 @@
-[gd_scene load_steps=4 format=3 uid="uid://wd40151ros2u"]
+[gd_scene load_steps=6 format=3 uid="uid://wd40151ros2u"]
 
 [ext_resource type="Script" uid="uid://io4oh6wsu7go" path="res://Funkin/Backend/Transitions/BaseTransition.gd" id="1_oh1q5"]
 
-[sub_resource type="Gradient" id="Gradient_rfsvv"]
+[sub_resource type="Gradient" id="Gradient_n5b8n"]
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_oh1q5"]
-gradient = SubResource("Gradient_rfsvv")
-width = 200
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_sdsqu"]
+gradient = SubResource("Gradient_n5b8n")
+width = 1
+height = 200
+fill_from = Vector2(0, 1)
+fill_to = Vector2(0, 0)
+
+[sub_resource type="Gradient" id="Gradient_oh1q5"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_n5b8n"]
+gradient = SubResource("Gradient_oh1q5")
+width = 1
+height = 200
+fill_to = Vector2(0, 1)
 
 [node name="BaseTransition" type="Control"]
 layout_mode = 3
@@ -19,16 +31,29 @@ grow_vertical = 2
 script = ExtResource("1_oh1q5")
 
 [node name="Curtan" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 1280.0
-offset_bottom = 500.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Cover" type="TextureRect" parent="Curtan"]
-layout_mode = 0
-offset_left = 1280.0
-offset_top = 500.0
-offset_right = 1380.0
-offset_bottom = 1780.0
-rotation = 1.57079
-texture = SubResource("GradientTexture1D_oh1q5")
+[node name="TopCover" type="TextureRect" parent="Curtan"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -200.0
+grow_horizontal = 2
+texture = SubResource("GradientTexture2D_sdsqu")
+
+[node name="BottomCover" type="TextureRect" parent="Curtan"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = SubResource("GradientTexture2D_n5b8n")

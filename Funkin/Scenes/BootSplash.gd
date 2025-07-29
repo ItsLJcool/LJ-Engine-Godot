@@ -1,19 +1,12 @@
 class_name BaseBootSplash extends Node2D
 
-@onready var temp_icon:Sprite2D = $Icon
-@onready var temp_text:RichTextLabel = $Text
+@onready var top_color:ColorRect = $UILayer/EndIt/ColorRect
 
-@onready var top_color:ColorRect = $ColorRect
-
-const NEXT_STATE:PackedScene = preload("res://Funkin/Scenes/MainTesting.tscn")
+const NEXT_STATE:PackedScene = preload("res://Funkin/Scenes/PlayState.tscn")
 
 func _ready() -> void:
-	var icon_size:Vector2 = (temp_icon.texture.get_size() * temp_icon.scale)
-	temp_icon.position = FunkinGame.window.size * 0.5
-	temp_text.position.x = temp_icon.position.x - icon_size.x + 25
-	temp_text.position.y = temp_icon.position.y + icon_size.y * 0.5
-	
-	top_color.size = FunkinGame.window.size
+	top_color.visible = true
+	pass
 
 func scene_ready():
 	await get_tree().create_timer(0.25).timeout

@@ -3,38 +3,26 @@ class_name BaseTransition extends Control
 signal transition_complete(out:bool)
 
 @onready var curtan:ColorRect = $Curtan
-@onready var cover:TextureRect = $Curtan/Cover
+@onready var top_cover:TextureRect = $Curtan/TopCover
+@onready var bottom_cover:TextureRect = $Curtan/BottomCover
+
+var COVER_HEIGHT:int = 200:
+	set(value):
+		COVER_HEIGHT = clamp(value, 0, INF)
+		if !top_cover and !bottom_cover: return
+		top_cover.texture.height = COVER_HEIGHT
+		bottom_cover.texture.height = COVER_HEIGHT
 
 func game_ready():
+	COVER_HEIGHT = COVER_HEIGHT
 	visible = true
 	set_process(false)
-	prepare_transition(false)
 
 func prepare_transition(out:bool = false):
-	curtan.size = FunkinGame.window.size
-	cover.size.y = curtan.size.x
-	
-	if out:
-		curtan.position.y = 0
-		
-		cover.position.y = -cover.texture.get_width()
-		cover.flip_h = true
-	else:
-		curtan.position.y = -FunkinGame.window.size.y - cover.texture.get_width()
-		
-		cover.position.y = curtan.size.y
-		cover.flip_h = false
+	position.y = -1280 - COVER_HEIGHT - 25 if !out else 0
 
-func transition_in(time:float = 0.5):
-	prepare_transition(false)
-	var twn = FunkinGame.instance.create_tween()
-	twn.tween_property(curtan, "position:y", 0, time)
-	await twn.finished
-	transition_complete.emit(false)
-
-func transition_out(time:float = 0.5):
-	prepare_transition(true)
-	var twn = FunkinGame.instance.create_tween()
-	twn.tween_property(curtan, "position:y", FunkinGame.window.size.y + cover.texture.get_width(), time)
-	await twn.finished
-	transition_complete.emit(true)
+func do_transition(out:bool = false):
+	prepare_transition(out)
+	var end_position:float = 1280 + COVER_HEIGHT if out else 0
+	await FunkinGame.instance.create_tween().tween_property(self, "position:y", end_position, 0.75).finished
+	transition_complete.emit(out)

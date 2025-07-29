@@ -7,6 +7,8 @@ var isReady:bool = false; ## If the Class is ready to play the song.
 
 static var songsPath:String = &"res://Assets/Songs" ## Path for the Songs Folder
 
+var chart:Dictionary = {}
+
 func _ready()->void:
 	set_process(false)
 	
@@ -56,7 +58,7 @@ static func parseJson(songName:String, difficulty:String = "normal")->Dictionary
 	return json
 
 ## Parses your CodenameEngine JSON. Returns True if successful
-static func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array[StrumLine] = [])->bool:
+func codenameParse(songName:String, difficulty:String = "normal", strumLines:Array[StrumLine] = [])->bool:
 	var json = parseJson(songName, difficulty)
 	if json == {}: return false
 	
@@ -73,4 +75,6 @@ static func codenameParse(songName:String, difficulty:String = "normal", strumLi
 		
 		# Sort the notes!!!!!
 		strumline.loop_for_strums(func(strum:Strum): strum.sort_preload_notes())
+	
+	chart = json
 	return true
