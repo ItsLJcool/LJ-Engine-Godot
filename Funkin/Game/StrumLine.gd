@@ -60,7 +60,6 @@ func refresh_strums(_queue_free:bool = false)->void: ## Re-evaluates positional 
 			strum.direction = idx
 			strum.scale = Vector2(strum_scale, strum_scale)
 			strumsGroup.add_child(strum)
-			strum.init()
 	
 	var real_padding = padding * strum_scale
 	

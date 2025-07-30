@@ -1,18 +1,76 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmhl80ytkys8o"]
+[gd_scene load_steps=10 format=3 uid="uid://cmhl80ytkys8o"]
 
 [ext_resource type="Script" uid="uid://wveif623n537" path="res://Funkin/Game/Note.gd" id="1_d8u1r"]
-[ext_resource type="SpriteFrames" uid="uid://r5fvayhl2c5j" path="res://Assets/Images/Notes/default/arrows.tres" id="2_wtik8"]
+[ext_resource type="Texture2D" uid="uid://bg045ohqydb5u" path="res://Assets/Images/Notes/default/arrows.png" id="2_wtik8"]
 [ext_resource type="Texture2D" uid="uid://cy7rcabkkklt7" path="res://Assets/Images/Notes/default/sustains/left-sustain.png" id="3_kutdp"]
 [ext_resource type="Texture2D" uid="uid://5d1tyxoogxha" path="res://Assets/Images/Notes/default/sustains/left-end.png" id="4_1pv0o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtik8"]
+atlas = ExtResource("2_wtik8")
+region = Rect2(1, 1, 154, 158)
+margin = Rect2(0, 0, 4, -4)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kutdp"]
+atlas = ExtResource("2_wtik8")
+region = Rect2(1, 324, 154, 157)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1pv0o"]
+atlas = ExtResource("2_wtik8")
+region = Rect2(1, 485, 154, 157)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gtfcl"]
+atlas = ExtResource("2_wtik8")
+region = Rect2(1, 163, 154, 157)
+margin = Rect2(0, 0, 3, -3)
+filter_clip = true
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3ddjf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtik8")
+}],
+"loop": false,
+"name": &"down",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kutdp")
+}],
+"loop": false,
+"name": &"left",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1pv0o")
+}],
+"loop": false,
+"name": &"right",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gtfcl")
+}],
+"loop": false,
+"name": &"up",
+"speed": 24.0
+}]
+metadata/use_rotation = true
 
 [node name="Note" type="Node2D"]
 script = ExtResource("1_d8u1r")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 z_index = 1
-sprite_frames = ExtResource("2_wtik8")
+sprite_frames = SubResource("SpriteFrames_3ddjf")
 animation = &"left"
-autoplay = "left"
+frame_progress = 1.0
 
 [node name="Sustain" type="Line2D" parent="."]
 points = PackedVector2Array(0, 0, 0, 200)

@@ -1,3 +1,4 @@
+@tool
 class_name Note extends Node2D
 
 #region Initalize Variable Names
@@ -9,9 +10,9 @@ class_name Note extends Node2D
 @onready var end:Sprite2D = $Sustain/ClipRect/End ## The end tail piece
 
 
-var notePath:String = "res://Assets/Images/Notes/%s/arrows.tres"
-var sustainsPath:String = "res://Assets/Images/Notes/%s/sustains/%s-sustain.png" ## Path for your sustain Images. use %s for the direction name
-var endPath:String = "res://Assets/Images/Notes/%s/sustains/%s-end.png" ## Path for your end Images. use %s for the direction name
+var note_path:String = "res://Assets/Images/Notes/%s/arrows.%s"
+var sustains_path:String = "res://Assets/Images/Notes/%s/sustains/%s-sustain.png" ## Path for your sustain Images. use %s for the direction name
+var end_path:String = "res://Assets/Images/Notes/%s/sustains/%s-end.png" ## Path for your end Images. use %s for the direction name
 
 var strum:Strum ## The Note's bounded Strum
 
@@ -64,20 +65,32 @@ func init(_strum:Strum, time:float, sustainLength:float)->void: ## Initalizing t
 	strumTime = time
 	susLength = sustainLength
 	
-	sprite.sprite_frames = load(notePath % "default")
-	
-	if (sprite.sprite_frames.get_meta("use_rotation")):
-		match strum.direction:
-			Strum.NoteDirection.DOWN, Strum.NoteDirection.UP: sprite.rotation_degrees -= 90
-	
-	var dirName:String = Strum.direction_to_string(strum.direction)
-	sprite.play(dirName)
-	sustain.texture = load(sustainsPath % ["default", dirName])
-	end.texture = load(endPath % ["default", dirName])
+	load_animation()
 	
 	clipRect.size = Vector2.ONE * sustain.width
 
+func load_animation():
+	sprite.sprite_frames = AnimationContainer.convert_to_spriteframes(load(note_path % ["default", "res"]), load(note_path % ["default", "png"]))
+	
+	var strum_direction:Strum.NoteDirection = Strum.NoteDirection.LEFT if !strum else strum.direction
+	
+	if sprite.sprite_frames.has_meta("use_rotation") and sprite.sprite_frames.get_meta("use_rotation"):
+		match strum_direction:
+			Strum.NoteDirection.DOWN, Strum.NoteDirection.UP: sprite.rotation_degrees = -90
+			_: sprite.rotation_degrees = 0
+	
+	var dirName:String = Strum.direction_to_string(strum_direction)
+	sprite.play(dirName)
+	sustain.texture = load(sustains_path % ["default", dirName])
+	end.texture = load(end_path % ["default", dirName])
+
+@export_tool_button("Refresh SpriteSheet") var reload = load_animation
+
 func _ready():
+	if Engine.is_editor_hint():
+		load_animation()
+		return
+	
 	clipRect.clip_contents = true
 	self.position.y = -5000
 	sustain.modulate.a = 0.6
@@ -98,7 +111,7 @@ func goodNoteHit()->void: ## Called when you hit the note properly
 	else: sprite.self_modulate.a = 0
 
 func _process(_delta: float) -> void:
-	if !render: return
+	if !render or Engine.is_editor_hint(): return
 	update_note()
 	
 	if canBeHit and wasGoodHit and !tooLate: 

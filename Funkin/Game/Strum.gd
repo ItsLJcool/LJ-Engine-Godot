@@ -7,7 +7,7 @@ signal onInput(direction:NoteDirection, input:InputType) ## Emits a signal for v
 @onready var sprite:AnimatedSprite2D = $Sprite ## The "Strum"'s Sprite itself.
 @onready var notesGroup:Node2D = $Notes ## A Node2D containing all the notes in the song. Better than an array!
 
-var strum_path:String = "res://Assets/Images/Notes/%s/static.tres"
+var strum_path:String = "res://Assets/Images/Notes/%s/static.%s"
 
 ## The MS render distance to update a note. 1500 is usually off screen but adjust if the window height or zoom makes notes appear randomly
 var render_limit:float = 1500
@@ -32,7 +32,8 @@ var scrollSpeed:float = 1.5: ## Your Single Strum's speed for how fast notes arr
 				3: value = NoteDirection.RIGHT;
 				_: value = NoteDirection.LEFT;
 		direction = value
-		init()
+		if !sprite: return
+		sprite.play("%s%s" % [direction_to_string(direction), _static])
 
 var hitNote:bool = false ## When you are actively hitting a note. Somewhat of an Internal Variable
 
@@ -60,12 +61,13 @@ enum InputType {
 #endregion
 
 func _ready():
-	pass
+	load_animation()
 
-func init()->void: ## Initalizes the strum 
-	if !sprite: return
-	sprite.sprite_frames = load(strum_path % "default")
+func load_animation():
+	sprite.sprite_frames = AnimationContainer.convert_to_spriteframes(load(strum_path % ["default", "res"]), load(strum_path % ["default", "png"]))
 	sprite.play("%s%s" % [direction_to_string(direction), _static])
+
+@export_tool_button("Refresh SpriteSheet") var reload = load_animation
 
 const INPUT_NAME = &"NOTE_%s" ## For inputs, using the Keybind names
 ## Converts Enum to string value.

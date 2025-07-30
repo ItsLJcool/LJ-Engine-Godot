@@ -52,7 +52,6 @@ folder_colors={
 "res://Assets/Themes/": "gray",
 "res://Funkin/": "green",
 "res://Funkin/Backend/": "orange",
-"res://Funkin/Editor/": "yellow",
 "res://Funkin/Game/": "blue",
 "res://Funkin/Scenes/": "pink"
 }

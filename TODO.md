@@ -1,8 +1,8 @@
 # LJ Engine - Godot | Todo List
 
 ## Fix Issues
-- [ ] Jack notes dissapear when close to the hit window, but you don't actually hit them??
-- [ ] FPS is lower when notes are stored in an array but not loaded??
+- [x] Jack notes dissapear when close to the hit window, but you don't actually hit them??
+- [x] FPS is lower when notes are stored in an array but not loaded??
 
 ### Basic Features
 
@@ -36,8 +36,7 @@
 ### Others
 
 - [x] Scene that manages switching between other states, UI, Camera, etc. *(FunkinGame.gd)*
-  - [ ] Add Transitions that are customizable
-  - [ ] Find out how to reflect variables onto another Script before it exists??? (i.e access `Camera` from `FunkinGame.gd` in `MainTesting.gd`)
+  - [x] Add Transition(s)
 
 - [ ] Re-implement `NotePath` for custom note pathing.
 

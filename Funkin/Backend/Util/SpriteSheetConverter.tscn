@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://dy4epfnjf1klg"]
+
+[ext_resource type="Script" uid="uid://dosgb0roflajr" path="res://Funkin/Backend/Util/SpriteSheetConverter.gd" id="1_gy8px"]
+
+[node name="SpriteSheetConverter" type="Node2D"]
+script = ExtResource("1_gy8px")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File or Directory"
+position = Vector2i(320, 180)
+visible = true
+ok_button_text = "Select This Folder"
+file_mode = 3
+root_subfolder = "res://Assets"
+
+[connection signal="dir_selected" from="FileDialog" to="." method="_on_file_dialog_dir_selected"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
