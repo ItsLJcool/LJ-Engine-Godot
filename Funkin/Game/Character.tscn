@@ -6,37 +6,37 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_crvj2"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(0, 2344, 406, 392)
-margin = Rect2(1, 20, 6, 40)
+margin = Rect2(1, 20, 5, 20)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xo17k"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(416, 2344, 408, 393)
-margin = Rect2(0, 19, 3, 38)
+margin = Rect2(0, 19, 3, 19)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_12kfn"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(834, 2344, 405, 398)
-margin = Rect2(3, 14, 9, 28)
+margin = Rect2(3, 14, 6, 14)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8amdh"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(1249, 2344, 410, 411)
-margin = Rect2(1, 1, 2, 2)
+margin = Rect2(1, 1, 1, 1)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y7j8h"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(1669, 2344, 408, 412)
-margin = Rect2(2, 0, 5, 0)
+margin = Rect2(2, 0, 3, 0)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vldv0"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(6640, 509, 374, 357)
-margin = Rect2(1, 5, 2, 10)
+margin = Rect2(1, 5, 1, 5)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cq1f8"]
@@ -54,13 +54,13 @@ filter_clip = true
 [sub_resource type="AtlasTexture" id="AtlasTexture_ncokx"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(393, 988, 374, 404)
-margin = Rect2(11, 2, 22, 4)
+margin = Rect2(11, 2, 11, 2)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y2k05"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(1929, 988, 408, 405)
-margin = Rect2(1, 2, 2, 4)
+margin = Rect2(1, 2, 1, 2)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_10dvd"]
@@ -72,13 +72,13 @@ filter_clip = true
 [sub_resource type="AtlasTexture" id="AtlasTexture_ttvr6"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(3580, 988, 369, 446)
-margin = Rect2(5, 0, 12, 0)
+margin = Rect2(5, 0, 7, 0)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hudes"]
 atlas = ExtResource("1_crvj2")
 region = Rect2(3959, 988, 376, 441)
-margin = Rect2(0, 5, 0, 10)
+margin = Rect2(0, 5, 0, 5)
 filter_clip = true
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_m6m0k"]
@@ -518,12 +518,11 @@ animations = [{
 }]
 
 [node name="Character" type="AnimatedSprite2D"]
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_m6m0k")
-animation = &"idle"
-centered = false
+animation = &"singDOWN"
 script = ExtResource("2_crvj2")
 
 [node name="CameraPosition" type="Marker2D" parent="."]
-position = Vector2(-36, 118)
+position = Vector2(-180, -44)
 gizmo_extents = 50.0

@@ -19,7 +19,7 @@ var sing_steps:float = 4
 ## The Node's Current Character to use for the .tres SpriteFrames
 var cur_character:String = "bf"
 
-var scale_factor:float = 0.5
+var scale_factor:float = 1
 
 ## Changes the character to a new one
 func change_character(new_character:String):
@@ -31,6 +31,7 @@ func change_character(new_character:String):
 func _ready() -> void:
 	if (Engine.is_editor_hint()):
 		change_character(cur_character)
+		dance()
 		return
 	dance()
 	Conductor.beat_hit.connect(beatHit)
@@ -79,7 +80,7 @@ func get_xml_animations(xml_path:String)->Dictionary:
 		if !animations.has(anim_name): animations[anim_name] = []
 		animations[anim_name].append({
 			"rect": Rect2i(x, y, w, h),
-			"frame": Rect2i(-frameX, -frameY, (frameWidth - w) - frameX, (frameHeight - h) - frameY),
+			"frame": Rect2i(frameX, frameY, frameWidth, frameHeight),
 			"isRotated": isRotated
 		})
 	
@@ -153,7 +154,7 @@ func load_animation()->void:
 				animTexture.atlas = base_image
 				animTexture.filter_clip = true
 				animTexture.region = rect
-				animTexture.margin = data.frame
+				animTexture.margin = Rect2i(-_frame.position, _frame.size - rect.size)
 				texture_cache[rect_key] = animTexture
 			
 			sprite_frames.add_frame(anim, animTexture)

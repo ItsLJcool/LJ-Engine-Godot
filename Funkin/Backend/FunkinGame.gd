@@ -14,6 +14,11 @@ static var UI_LAYER:CanvasLayer: ## This will be your UI Layer. Moving the camer
 	get: return instance.__UI_LAYER
 	set(value): return
 
+@onready var __ui_control:Control = $"UILayer/UI Control"
+static var UI_CONTROL:Control:
+	get: return instance.__ui_control
+	set(value): return
+
 @onready var __STATIC_GAME_LAYER:Node2D = $"Static Game" ## Internal variable to be referenced by static
 static var STATIC_GAME_LAYER:Node2D: ##
 	get: return instance.__STATIC_GAME_LAYER
@@ -74,7 +79,7 @@ static func add_UI(node:Node): UI_LAYER.add_child(node) ## Adds your Node to the
 static func remove_UI(node:Node): UI_LAYER.remove_child(node) ## Removes your Node from the UI Layer
 
 ## 1 Argument Passable function parameter to quickly loop through every object in the UI Layer
-static func loop_for_ui(fiction:Callable): for node:Node in UI_LAYER.get_children(): fiction.call(node)
+static func loop_for_ui(fiction:Callable): for node:Node in UI_CONTROL.get_children(): fiction.call(node)
 
 
 static func reset_camera_position():
@@ -89,6 +94,7 @@ static func reset_camera_position():
 static var DEFAULT_WINDOW_SIZE:Vector2 = Vector2(ProjectSettings.get_setting("display/window/size/viewport_width", 1280), ProjectSettings.get_setting("display/window/size/viewport_height", 720))
 
 var STARTING_SCENE:String = ProjectSettings.get_setting("application/run/funkin_main_scene", "res://Funkin/Backend/Internal/BackupScene.tscn")
+var color:Color = ProjectSettings.get_setting("engine/default_bg_color", Color.BLACK)
 
 func _ready():
 	if instance != null:
@@ -97,6 +103,8 @@ func _ready():
 	
 	instance = self
 	window = get_window()
+	
+	RenderingServer.set_default_clear_color(color)
 	
 	var disable_physics = (func(node:Node): node.set_physics_process(false) )
 	disable_physics.call(self)
@@ -134,6 +142,7 @@ static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool
 		TransitionNode.do_transition(false)
 		await TransitionNode.transition_complete
 	else: TransitionNode.prepare_transition(true)
+	
 	camera.do_bumping = false
 	reset_camera_position()
 	
@@ -146,13 +155,14 @@ static func switch_state(packed:PackedScene, skip_in:bool = false, skip_out:bool
 	# If the scene has a Layer the same name as our UILayer, then reparent them to this state's UILayer for formality
 	var uiLayer:CanvasLayer = new_scene.get_node_or_null('%s' % UI_LAYER.name)
 	if uiLayer is CanvasLayer:
-		for node in uiLayer.get_children(): node.reparent(UI_LAYER)
+		for node in uiLayer.get_children(): node.reparent(UI_CONTROL)
 		uiLayer.queue_free()
 	
 	if !skip_out:
 		TransitionNode.do_transition(true)
 		await TransitionNode.transition_complete
-	else:  TransitionNode.prepare_transition(false)
+	else: TransitionNode.prepare_transition(false)
+	
 	new_scene.set_process(true)
 	
 	if new_scene.has_method("scene_ready"): new_scene.call("scene_ready")

@@ -13,7 +13,7 @@ position = Vector2(154, 562)
 gizmo_extents = 20.0
 
 [node name="Bf" type="Marker2D" parent="CharacterPositions"]
-position = Vector2(1038, 562)
+position = Vector2(882, 528)
 gizmo_extents = 20.0
 
 [node name="Gf" type="Marker2D" parent="CharacterPositions"]
@@ -26,11 +26,11 @@ position = Vector2(640, 360)
 [node name="Behind" type="Node" parent="."]
 
 [node name="Stageback" type="Sprite2D" parent="Behind"]
-position = Vector2(640, 322)
+position = Vector2(640, 418)
 texture = ExtResource("1_efr1o")
 
 [node name="Stagefront" type="Sprite2D" parent="Behind"]
-position = Vector2(640, 720)
+position = Vector2(634, 706)
 texture = ExtResource("2_dtjny")
 
 [node name="Characters" type="Node" parent="."]
@@ -38,5 +38,6 @@ texture = ExtResource("2_dtjny")
 [node name="Front" type="Node" parent="."]
 
 [node name="Stagecurtains" type="Sprite2D" parent="Front"]
-position = Vector2(640, 584)
+position = Vector2(660, 466)
+scale = Vector2(0.8, 0.8)
 texture = ExtResource("3_47w03")

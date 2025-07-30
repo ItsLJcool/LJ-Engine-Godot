@@ -153,8 +153,5 @@ func _input(event:InputEvent):
 
 func check_note_press()->void:
 	var sorted_notes := notesGroup.get_children().filter(func(note:Note): return (note is Note) and (note.canBeHit and !note.wasGoodHit))
-	
 	if sorted_notes.is_empty(): return
-	
-	sorted_notes.sort_custom(func(a:Note, b:Note): return a.strumTime < b.strumTime)
 	sorted_notes[0].goodNoteHit()

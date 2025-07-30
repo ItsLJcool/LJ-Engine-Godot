@@ -20,7 +20,6 @@ func _ready() -> void:
 	var testCharacter = Character.create()
 	player.add_character(testCharacter)
 	stage_manager.add_character(testCharacter)
-	testCharacter.position = stage_manager.starting_camera_marker.position
 	
 	add_child(song)
 	song.init(song_name)
