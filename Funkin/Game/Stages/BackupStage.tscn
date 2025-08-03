@@ -1,27 +1,35 @@
-[gd_scene load_steps=4 format=3 uid="uid://cgtaop47niaba"]
+[gd_scene load_steps=6 format=3 uid="uid://cgtaop47niaba"]
 
+[ext_resource type="Script" uid="uid://blr3t4oxxluec" path="res://Funkin/Backend/FunkinCamera.gd" id="1_47w03"]
+[ext_resource type="Script" uid="uid://fdpyafdkjpb3" path="res://Funkin/Backend/Util/StagePositioning.gd" id="1_dtjny"]
 [ext_resource type="Texture2D" uid="uid://b8xtytylsgb8" path="res://Assets/Images/Stages/BackupStage/stageback.png" id="1_efr1o"]
 [ext_resource type="Texture2D" uid="uid://cwcvtjbfrsgsu" path="res://Assets/Images/Stages/BackupStage/stagefront.png" id="2_dtjny"]
 [ext_resource type="Texture2D" uid="uid://etgt5uot8ikk" path="res://Assets/Images/Stages/BackupStage/stagecurtains.png" id="3_47w03"]
 
 [node name="BackupStage" type="Node2D"]
 
-[node name="CharacterPositions" type="Node" parent="."]
+[node name="StartingCamera" type="Camera2D" parent="."]
+z_index = 1
+position = Vector2(640, 360)
+zoom = Vector2(0.75, 0.75)
+script = ExtResource("1_47w03")
+metadata/_custom_type_script = "uid://blr3t4oxxluec"
+
+[node name="CharacterPositions" type="Node2D" parent="."]
+z_index = 1
+script = ExtResource("1_dtjny")
+
+[node name="Gf" type="Marker2D" parent="CharacterPositions"]
+position = Vector2(627, 387)
+gizmo_extents = 20.0
 
 [node name="Dad" type="Marker2D" parent="CharacterPositions"]
-position = Vector2(154, 562)
+position = Vector2(193, 476)
 gizmo_extents = 20.0
 
 [node name="Bf" type="Marker2D" parent="CharacterPositions"]
-position = Vector2(882, 528)
+position = Vector2(1035, 471)
 gizmo_extents = 20.0
-
-[node name="Gf" type="Marker2D" parent="CharacterPositions"]
-position = Vector2(627, 486)
-gizmo_extents = 20.0
-
-[node name="CameraStartPos" type="Marker2D" parent="."]
-position = Vector2(640, 360)
 
 [node name="Behind" type="Node" parent="."]
 
@@ -38,6 +46,6 @@ texture = ExtResource("2_dtjny")
 [node name="Front" type="Node" parent="."]
 
 [node name="Stagecurtains" type="Sprite2D" parent="Front"]
-position = Vector2(660, 466)
+position = Vector2(660, 371)
 scale = Vector2(0.8, 0.8)
 texture = ExtResource("3_47w03")

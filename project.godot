@@ -26,6 +26,7 @@ run/funkin_main_scene="res://Funkin/Scenes/BootSplash.tscn"
 [autoload]
 
 Conductor="*res://Funkin/Backend/Conductor.gd"
+AlwaysLoadedScenes="*res://Funkin/Backend/Internal/AlwaysLoadedScenes.tscn"
 
 [display]
 

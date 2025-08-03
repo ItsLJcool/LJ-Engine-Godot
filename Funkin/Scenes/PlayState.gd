@@ -10,12 +10,8 @@ var song_name:String = "linkbite"
 var song:Song = Song.new()
 
 func _ready() -> void:
-	FunkinGame.camera.do_bumping = true
 	
 	stage_manager.load_stage()
-	
-	FunkinGame.camera.follow(stage_manager.starting_camera_marker)
-	FunkinGame.camera.snap_to_focus()
 	
 	var testCharacter = Character.create()
 	player.add_character(testCharacter)
@@ -25,5 +21,3 @@ func _ready() -> void:
 	song.init(song_name)
 	song.codenameParse(song_name, "hard", [cpu, player])
 	Conductor.intro(0)
-	
-	

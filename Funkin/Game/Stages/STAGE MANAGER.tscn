@@ -1,11 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://dedfx4sf75b8d"]
+[gd_scene load_steps=3 format=3 uid="uid://dedfx4sf75b8d"]
 
 [ext_resource type="Script" uid="uid://8q3svkabgji8" path="res://Funkin/Game/Stages/STAGE MANAGER.gd" id="1_3qqs4"]
+[ext_resource type="Script" uid="uid://blr3t4oxxluec" path="res://Funkin/Backend/FunkinCamera.gd" id="2_2mecb"]
 
 [node name="Manager" type="Node"]
 script = ExtResource("1_3qqs4")
 
-[node name="CameraStartPos" type="Marker2D" parent="."]
+[node name="StartingCamera" type="Camera2D" parent="."]
+script = ExtResource("2_2mecb")
+metadata/_custom_type_script = "uid://blr3t4oxxluec"
 
 [node name="CharacterPositions" type="Node" parent="."]
 

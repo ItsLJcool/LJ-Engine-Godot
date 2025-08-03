@@ -1,18 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://dwwj0wky3eraf"]
+[gd_scene load_steps=3 format=3 uid="uid://dwwj0wky3eraf"]
 
 [ext_resource type="Script" uid="uid://rgbh5x7blv27" path="res://Funkin/Backend/FunkinGame.gd" id="1_gak6w"]
-[ext_resource type="PackedScene" uid="uid://b7hgmg8e8ia7b" path="res://Funkin/Backend/Internal/SoundTray.tscn" id="2_rfsvv"]
-[ext_resource type="Script" uid="uid://blr3t4oxxluec" path="res://Funkin/Backend/FunkinCamera.gd" id="2_s7a27"]
-[ext_resource type="PackedScene" uid="uid://dy7tpi7e47aww" path="res://Funkin/Backend/Internal/FPS.tscn" id="2_yja8m"]
 [ext_resource type="PackedScene" uid="uid://wd40151ros2u" path="res://Funkin/Backend/Transitions/BaseTransition.tscn" id="4_jhou3"]
 
 [node name="FunkinGame" type="Node"]
 script = ExtResource("1_gak6w")
-
-[node name="FunkinCamera" type="Camera2D" parent="."]
-script = ExtResource("2_s7a27")
-
-[node name="CameraFocus" type="Marker2D" parent="."]
 
 [node name="Static Game" type="Node2D" parent="."]
 
@@ -34,8 +26,3 @@ layer = 2
 
 [node name="BaseTransition" parent="Information" instance=ExtResource("4_jhou3")]
 visible = false
-
-[node name="SoundTray" parent="Information" instance=ExtResource("2_rfsvv")]
-position = Vector2(640, -250)
-
-[node name="FPS" parent="Information" instance=ExtResource("2_yja8m")]

@@ -11,7 +11,7 @@ static func stage_pos_to_string(type:StagePosition)->String: return StagePositio
 const BACKUP_STAGE:PackedScene = preload("res://Funkin/Game/Stages/BackupStage.tscn")
 const STAGES_PATH:String = "res://Funkin/Game/Stages/%s.tscn"
 
-@onready var starting_camera_marker:Marker2D = $CameraStartPos
+@onready var starting_camera:Camera2D = $StartingCamera
 
 @onready var character_positions:Node = $CharacterPositions
 
@@ -35,13 +35,17 @@ func loop_for_node(item:Node, fiction:Callable): for node:Node in item.get_child
 
 func reparent_children_to(new_parent:Node, children:Node, path:String = "%s"):
 	var container:Node = children.get_node_or_null(path % new_parent.name)
-	if container is Node:
+	if container:
 		for node in container.get_children(): node.reparent(new_parent)
 		container.queue_free()
 
 func set_node_to(default:Node, check_node:Node, path:String = "%s")->Node:
 	var container:Node = check_node.get_node_or_null(path % default.name)
-	return container if container is Node else default
+	print(container)
+	if container:
+		default.queue_free()
+		return container
+	return default
 
 func clear_stage(remove_characters:bool = false):
 	var free:Callable = func(node:Node): node.queue_free()
@@ -51,7 +55,6 @@ func clear_stage(remove_characters:bool = false):
 	loop_for_node(character_positions, free)
 
 func load_stage(local_name_path:String = ""):
-	
 	var stage_path:String = STAGES_PATH % local_name_path
 	var stage:Node = load(stage_path).instantiate() if ResourceLoader.exists(stage_path) else BACKUP_STAGE.instantiate()
 	
@@ -63,7 +66,6 @@ func load_stage(local_name_path:String = ""):
 	
 	add_child(stage)
 	
-	starting_camera_marker = set_node_to(starting_camera_marker, stage)
+	starting_camera = set_node_to(starting_camera, stage)
 	for node:Node in [character_positions, layer_behind, layer_characters, layer_front]: reparent_children_to(node, stage)
-	
 	

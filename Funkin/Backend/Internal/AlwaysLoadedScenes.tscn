@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cnxywx312l5pu"]
+
+[ext_resource type="Script" uid="uid://bwrnrsawf4lmk" path="res://Funkin/Backend/Internal/AlwaysLoadedScene.gd" id="1_hy0fh"]
+[ext_resource type="PackedScene" uid="uid://b7hgmg8e8ia7b" path="res://Funkin/Backend/Internal/SoundTray.tscn" id="1_jqd43"]
+[ext_resource type="PackedScene" uid="uid://dy7tpi7e47aww" path="res://Funkin/Backend/Internal/FPS.tscn" id="2_hy0fh"]
+
+[node name="AlwaysLoadedScenes" type="Node"]
+script = ExtResource("1_hy0fh")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="SoundTray" parent="CanvasLayer" instance=ExtResource("1_jqd43")]
+position = Vector2(640, -250)
+
+[node name="FPS" parent="CanvasLayer" instance=ExtResource("2_hy0fh")]

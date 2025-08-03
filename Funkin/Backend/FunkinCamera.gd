@@ -23,7 +23,7 @@ func _process(delta: float) -> void:
 	position = position.lerp(focus_marker.position, (1.0 - pow(1.0 - follow_lerp, delta * 60)))
 	zoom = zoom.lerp(Vector2(zoom_val, zoom_val), (1.0 - pow(1.0 - zoom_lerp, delta * 60)))
 
-var do_bumping:bool = false
+@export var do_bumping:bool = true
 var bump_strength:float = 1
 var bump_intensity:float = 0.015
 
