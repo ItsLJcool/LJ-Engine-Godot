@@ -19,5 +19,5 @@ This is a Friday Night Funkin' Game Engine designed in Godot, and is meant to be
   - Combined formatting and rotated sprite implementation, the rest I did figure out myself but still credits to cherry 🔥
   - I plan for the [`SparrowAtlas`](./assets/resources/SparrowAtlas.gd) resource to contain the SpriteFrames, AND the Texture as 1 `.tres` asset but currently not implemented yet
 - [x] [`NotePositionRemap`](./assets/resources/NotePositionRemap.gd) to allow custom positioning of [`Note`](./scripts/Note.gd)s
-- [] [`MultiAudioStreamPlayer`](./assets/resources/MultiAudioStreamPlayer.gd) for containing multiple audio players and easier interaction for pausing, and syncing.
+- [ ] [`MultiAudioStreamPlayer`](./assets/resources/MultiAudioStreamPlayer.gd) for containing multiple audio players and easier interaction for pausing, and syncing.
 
