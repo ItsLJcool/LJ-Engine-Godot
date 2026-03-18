@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://wamsj21tttke"
+path="res://.godot/imported/Inst.ogg-11f48822af80e3ffb89c13fa5651f32d.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/songs/bergadam sandler/song/Inst.ogg"
+dest_files=["res://.godot/imported/Inst.ogg-11f48822af80e3ffb89c13fa5651f32d.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0.0
+bpm=168.0
+beat_count=0
+bar_beats=4
