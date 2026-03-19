@@ -6,6 +6,14 @@ class_name Chart extends Resource
 
 @export var meta:ChartMeta = ChartMeta.new()
 
+func get_vocals() -> Array[String]:
+	var vocals:Array[String] = []
+	for strumline in strumlines:
+		if strumline.vocals_suffix.strip_edges() == "": continue
+		vocals.push_back(strumline.vocals_suffix)
+	if vocals.is_empty(): return [""]
+	return vocals
+
 ## Quick utility to parse a json from the folder structure
 static func parse_json(song_name:String, difficulty:String = "normal")->Dictionary:
 	var path = "assets/songs/%s/charts/%s.json" % [song_name, difficulty]

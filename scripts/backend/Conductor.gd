@@ -147,7 +147,9 @@ var audio_stream:AudioStream:
 
 var audio_bus:StringName:## [AudioStream]'s Audio Bus.
 	get: return _audio_player.bus
-	set(v): _audio_player.bus = v
+	set(v):
+		set_audio_to_sync(0, audio_stream)
+		_audio_player.bus = v
 
 var _audio_player:AudioStreamPlayer = AudioStreamPlayer.new()
 
@@ -178,6 +180,7 @@ func _init() -> void:
 	audio_bus = &"Music"
 	_audio_player.finished.connect(finished)
 	add_child(_audio_player)
+
 
 func _process(_delta: float) -> void:
 	if paused or !has_started: return # Nao need to calculate if we aren't progressing lol
@@ -256,3 +259,12 @@ func finished() -> void:
 	stop()
 	bpm_changes = [BpmChange.dummy]
 	on_conductor_finished.emit()## When the audio is [finished] playeing
+	syncronized_stream.stream_count = 0
+
+var syncronized_stream:AudioStreamSynchronized = AudioStreamSynchronized.new()
+func add_audio_to_sync(stream:AudioStream):
+	syncronized_stream.set_sync_stream(syncronized_stream.stream_count, stream)
+	syncronized_stream.stream_count += 1
+
+func set_audio_to_sync(index:int, stream:AudioStream):
+	syncronized_stream.set_sync_stream(index, stream)

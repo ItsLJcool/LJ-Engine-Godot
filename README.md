@@ -5,6 +5,7 @@ This is a Friday Night Funkin' Game Engine designed in Godot, and is meant to be
 ## Current Features
 - [x] [`Note`](./scripts/Note.gd), [`Strum`](./scripts/Strum.gd), & [`StrumLine`](./scripts/StrumLine.gd) use Constructors for performance increase, no Scene is attached to the script.
 - [x] [`Conductor`](./scripts/backend/Conductor.gd) using the "QuarterSeconds Conductor" formula (read the script for more info)
+- [x] [`Conductor`](./scripts/backend/Conductor.gd) has `AudioStreamSynchronized` so you can append `AudioStreams` into it so it will always have the audio's synced.
 - [x] Downscroll uses negative `scroll_speed`
   - [`Note`](./scripts/Note.gd) can override [`Strum`](./scripts/Strum.gd)'s `scroll_speed`
 - [x] Optimized [`Note`](./scripts/Note.gd) Rendering
@@ -19,5 +20,5 @@ This is a Friday Night Funkin' Game Engine designed in Godot, and is meant to be
   - Combined formatting and rotated sprite implementation, the rest I did figure out myself but still credits to cherry 🔥
   - I plan for the [`SparrowAtlas`](./assets/resources/SparrowAtlas.gd) resource to contain the SpriteFrames, AND the Texture as 1 `.tres` asset but currently not implemented yet
 - [x] [`NotePositionRemap`](./assets/resources/NotePositionRemap.gd) to allow custom positioning of [`Note`](./scripts/Note.gd)s
-- [ ] [`MultiAudioStreamPlayer`](./assets/resources/MultiAudioStreamPlayer.gd) for containing multiple audio players and easier interaction for pausing, and syncing.
+- [x] [`MultiAudioStreamPlayer`](./assets/resources/MultiAudioStreamPlayer.gd) for containing multiple audio players and easier interaction for pausing, and syncing.
 
