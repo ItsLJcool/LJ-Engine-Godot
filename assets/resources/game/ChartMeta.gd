@@ -7,7 +7,7 @@ class_name ChartMeta extends Resource
 @export var beats_per_measure:int = 4
 @export var steps_per_beat:int = 4
 
-@export var difficulties:Array[String] = ["easy", "normal", "hard"]
+@export var difficulties:Array = ["easy", "normal", "hard"]
 
 @export var require_voices:bool = false
 @export var inst_suffix:String = ""
@@ -18,18 +18,18 @@ class_name ChartMeta extends Resource
 static func from_cne_chart(data:Dictionary) -> ChartMeta:
 	var meta:ChartMeta = ChartMeta.new()
 	
-	if data.name: meta.name = data.name
-	if data.displayName: meta.display_name = data.displayName
+	meta.name = data.get("name", meta.name)
+	meta.display_name = data.get("displayName", meta.display_name)
 	
-	if data.bpm: meta.bpm = data.bpm
-	if data.beatsPerMeasure: meta.beats_per_measure = data.beatsPerMeasure
-	if data.stepsPerBeat: meta.steps_per_beat = data.stepsPerBeat
+	meta.bpm = data.get("bpm", meta.bpm)
+	meta.beats_per_measure = data.get("beatsPerMeasure", meta.beats_per_measure)
+	meta.steps_per_beat = data.get("stepsPerBeat", meta.steps_per_beat)
 	
-	if data.difficulties: meta.difficulties = data.difficulties
+	meta.difficulties = data.get("difficulties", meta.difficulties) as Array[String] # doesn't work fsr so kms
 	
-	if data.vocalsSuffix: meta.vocal_suffix = data.vocalsSuffix
-	if data.instSuffix: meta.inst_suffix = data.instSuffix
-	if data.needsVoices: meta.require_voices = data.needsVoices
+	meta.vocal_suffix = data.get("vocalsSuffix", meta.vocal_suffix)
+	meta.inst_suffix = data.get("instSuffix", meta.inst_suffix)
+	meta.require_voices = data.get("needsVoices", meta.require_voices)
 	
-	if data.customValues: meta.extra = (data.customValues as Dictionary)
+	if data.has("customValues"): meta.extra = (data.customValues as Dictionary)
 	return meta

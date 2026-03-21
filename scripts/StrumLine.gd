@@ -1,5 +1,7 @@
 class_name StrumLine extends Node2D
 
+signal on_note_hit(note:Note)
+
 var strums_group:Node2D = Node2D.new()
 
 var key_count:int = 4
@@ -17,15 +19,14 @@ var hud_pos:float = 0.5:
 		hud_pos = v
 		position.x = ProjectSettings.get_setting("display/window/size/viewport_width") * v
 
-
 var scroll_speed:float = 1.5:
 	set(v):
 		scroll_speed = v
 		for strum:Strum in strums_group.get_children(): strum.scroll_speed = v
 
 var type:StringName = &"default"
-var remap_type:FunkinHelper.FunkinAnimationRemap:
-	get: return FunkinHelper.get_remap(self.type)
+var remap_type:FunkinHelper.NoteAnimationRemap:
+	get: return FunkinHelper.NoteAnimationRemap.get_remap(self.type)
 
 func regen_strums():
 	for strum:Node in strums_group.get_children(): strums_group.remove_child(strum)
@@ -36,7 +37,11 @@ func regen_strums():
 		strum.position.x = (position_offset.x * idx)
 		strum.position.x -= position_offset.x * ((key_count-1)*0.5)
 		strum.position.y += position_offset.y
+		strum.on_note_hit.connect(note_hit)
 		strums_group.add_child(strum)
+
+func note_hit(note:Note) -> void:
+	on_note_hit.emit(note)
 
 func _init(data:ChartStrumLine = ChartStrumLine.new()) -> void:
 	key_count = data.key_count

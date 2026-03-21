@@ -1,16 +1,18 @@
 class_name Strum extends AnimatedSprite2D
 
+signal on_note_hit(note:Note)
+
 ## The Strum's Type as a String
 var strum_type:StringName = &"default":
 	set(v):
 		strum_type = v
 		reload_note_animations()
-var remap_type:FunkinHelper.FunkinAnimationRemap:
-	get: return FunkinHelper.get_remap(self.strum_type)
+var remap_type:FunkinHelper.NoteAnimationRemap:
+	get: return FunkinHelper.NoteAnimationRemap.get_remap(self.strum_type)
 
 var dir:FunkinHelper.DirectionType = FunkinHelper.DirectionType.LEFT
 var direction_name:StringName:
-	get: return FunkinHelper.direction_to_nametype(dir, strum_type)
+	get: return FunkinHelper.NoteAnimationRemap.direction_to_nametype(dir, strum_type)
 
 var render_limit:float = 1500
 
@@ -30,6 +32,7 @@ func preload_notes(_notes:Array[ChartNote]) -> void:
 func spawn_note(data:ChartNote):
 	var note:Note = Note.new(data.time, data.sus_length, data.direction, data.type)
 	note.binding_strum = self
+	note.on_hit.connect(func(): on_note_hit.emit(note))
 	notes_group.add_child(note)
 
 ## The SparrowAtlas referencing for the xml / texture that will automatically be parsed :)
@@ -49,7 +52,7 @@ var scroll_speed:float = 1
 var cpu:bool = true
 
 func reload_note_animations() -> void:
-	sparrow_atlas = SparrowAtlas.new(Note.NOTE_PATH % strum_type)
+	sparrow_atlas = SparrowAtlas._load(Note.NOTE_PATH % strum_type)
 	
 	play("%s-%s" % [remap_type.ARROW, direction_name])
 
@@ -87,14 +90,14 @@ func _input(event:InputEvent):
 			return false
 		)
 
-func check_note_press()->bool:
+## Returns true if a note was just pressed.
+func check_note_press() -> bool:
 	var sorted_notes:Array[Node] = notes.filter(func(note:Note):
 		return (note.can_be_hit and !note.was_good_hit and !note.failed_hit)
 	)
 	
 	if sorted_notes.is_empty(): return false
-	sorted_notes.pop_front().on_hit()
-	
+	sorted_notes.pop_front().hit()
 	return true
 
 

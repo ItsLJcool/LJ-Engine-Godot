@@ -7,20 +7,27 @@ class_name SparrowAtlas extends Resource
 # This code is somewhat based off of my experiences and cherrythecool's FunkinGodot project for the rotating texture implementation.
 
 @export var sprite_frames:SpriteFrames = null
+@export var animation_offsets:Dictionary[String, Vector2] = {}
 ## TODO: Save the texture / embedded into the file so we don't need more than 1 file reference when publishing
 #@export var texture:CompressedTexture2D = null
 
-var save_flags:int = ResourceSaver.FLAG_COMPRESS
+static var save_flags:int = ResourceSaver.FLAG_COMPRESS
 
-func _init(path:String) -> void:
+static var export_type:String = ".tres"
+
+static func _load(path:String) -> SparrowAtlas:
 	path = path.get_basename()
-	if FileAccess.file_exists(path+".tres"):
-		sprite_frames = (load(path+".tres") as SpriteFrames)
-		return
 	
+	if FileAccess.file_exists(path+".tres"): return load(path+".tres") as SparrowAtlas
+	else: return SparrowAtlas.new(path)
+
+func _init(path = null) -> void:
+	if path == null: return
+	path = path.get_basename()
+	
+	if sprite_frames != null: return
 	sprite_frames = parse_xml(path+".xml")
-	var output_path:String = path+".tres"
-	ResourceSaver.save(sprite_frames, output_path, save_flags)
+	ResourceSaver.save(self, path+".tres", save_flags)
 
 static func parse_xml(path: String) -> SpriteFrames:
 	assert(FileAccess.file_exists(path), "File needs to exist.")

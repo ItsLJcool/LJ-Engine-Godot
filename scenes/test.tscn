@@ -7,3 +7,5 @@ script = ExtResource("1_errlg")
 
 [node name="Camera" type="Camera2D" parent="." unique_id=109348988]
 position = Vector2(960, 540)
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=574378113]

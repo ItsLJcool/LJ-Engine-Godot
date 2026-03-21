@@ -1,5 +1,7 @@
 class_name Note extends AnimatedSprite2D
 
+signal on_hit
+
 var clip_rect:Control = Control.new()
 var sustain:TextureRect = TextureRect.new()
 var end:Sprite2D = Sprite2D.new()
@@ -18,15 +20,15 @@ var sparrow_atlas:SparrowAtlas:
 
 ## The Note Type as a string
 var note_type:StringName = &"default"
-var remap_type:FunkinHelper.FunkinAnimationRemap:
-	get: return FunkinHelper.get_remap(self.note_type)
+var remap_type:FunkinHelper.NoteAnimationRemap:
+	get: return FunkinHelper.NoteAnimationRemap.get_remap(self.note_type)
 
 var dir:FunkinHelper.DirectionType = FunkinHelper.DirectionType.LEFT:
 	set(v):
 		dir = v
 		reload_note_animations()
 var direction_name:StringName:
-	get: return FunkinHelper.direction_to_nametype(dir, note_type)
+	get: return FunkinHelper.NoteAnimationRemap.direction_to_nametype(dir, note_type)
 
 ## If true, Hold Pieces will use the 1st pixel row of the Tail texture, otherwise uses normal hold piece texture
 var use_sustain_texture:bool = true
@@ -95,7 +97,7 @@ func _init(strum_time:float = 1500, sus:float = 0, _dir:FunkinHelper.DirectionTy
 	self.time = strum_time
 
 func reload_note_animations() -> void:
-	sparrow_atlas = SparrowAtlas.new(NOTE_PATH % note_type)
+	sparrow_atlas = SparrowAtlas._load(NOTE_PATH % note_type)
 	
 	play(direction_name)
 	
@@ -138,9 +140,11 @@ var failed_hit:bool = false:
 
 var binding_strum:Strum = null
 
-func on_hit() -> void:
+func hit() -> void:
 	if failed_hit: return
 	was_good_hit = true
+	
+	on_hit.emit()
 	
 	if is_sustain_note: self_modulate.a = 0
 	else: delete()
@@ -157,7 +161,7 @@ func _process(_delta:float):
 	)
 	
 	if (binding_strum.cpu and !avoid and !was_good_hit && time < Conductor.song_position):
-		on_hit()
+		hit()
 	
 	if ((time + sus_length) < (Conductor.song_position - binding_strum.hit_window) and !was_good_hit):
 		too_late = true

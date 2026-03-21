@@ -19,10 +19,6 @@ var playback_position:float = 0.0:
 func _init(...args:Array) -> void:
 	for value:String in args: add_new_player(value)
 
-func _process(delta: float) -> void:
-	if paused: return
-	playback_position += delta
-
 func add_new_player(path:String):
 	var player:AudioStreamPlayer = AudioStreamPlayer.new()
 	player.stream = load(path)

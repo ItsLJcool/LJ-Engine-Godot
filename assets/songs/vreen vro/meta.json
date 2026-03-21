@@ -1,0 +1,18 @@
+{
+	"customValues": {
+		"RPCIcon": "vreen-vro",
+		"hasLJmix": "true"
+	},
+	"color": "#00CA00",
+	"opponentModeAllowed": true,
+	"difficulties": [
+		"HARD"
+	],
+	"icon": "zander-1",
+	"coopAllowed": true,
+	"stepsPerBeat": 4,
+	"displayName": "Vreen Vro",
+	"needsVoices": false,
+	"beatsPerMeasure": 4,
+	"bpm": 109
+}

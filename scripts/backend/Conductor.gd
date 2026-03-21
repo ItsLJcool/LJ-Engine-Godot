@@ -140,16 +140,11 @@ func _get_crochet_ms(_bpm:float) -> float: return (15000 * steps_per_beat) / _bp
 ## If Audio has a BPM attached to it, it will update [member bpm] automatically
 var audio_stream:AudioStream:
 	get: return _audio_player.stream
-	set(v):
-		_audio_player.stream = v
-		if _audio_player.stream.bpm <= 0: return
-		bpm = _audio_player.stream.bpm
+	set(v): _audio_player.stream = v
 
 var audio_bus:StringName:## [AudioStream]'s Audio Bus.
 	get: return _audio_player.bus
-	set(v):
-		set_audio_to_sync(0, audio_stream)
-		_audio_player.bus = v
+	set(v): _audio_player.bus = v
 
 var _audio_player:AudioStreamPlayer = AudioStreamPlayer.new()
 
@@ -158,32 +153,44 @@ var offset:float = 0## Offset in milliseconds
 var _latency:float = AudioServer.get_output_latency()## [AudioServer] latency cache
 
 ## Current position in milliseconds.
-var song_position:float:
-	get: return (playback_position*1000) - offset
+var song_position:float = 0.0:
+	get: return (song_position + AudioServer.get_time_since_last_mix()) - offset
+	set(v): song_position = v
 
-## Used for checking actual position, [member song_position] is used for exact current time with an offset.
+## Used for checking actual position, use [member song_position] for visual timing
 var playback_position:float:
-	get: return (_audio_player.get_playback_position() + AudioServer.get_time_since_last_mix()) - _latency
+	get: return (_audio_player.get_playback_position() - _latency) * 1000
 	set(v): _audio_player.seek(v) # Really you shouldn't be able to set it, but what the heck lol
 
 ## Returns the current length of the [AudioStream], in Seconds.
 var length:float:
 	get: return _audio_player.stream.get_length()
 
-## A 0 - 1 range, 0 being the start, and 1 being finished.[br]
-## Is not based off of [member song_position], but rather the internal position.
+## A 0 - 1 range, 0 being the start, and 1 being finished.
 var percent:float:
 	get: return (playback_position / length)
 #endregion
 
 func _init() -> void:
 	audio_bus = &"Music"
+	_audio_player.stream = AudioStreamSynchronized.new()
 	_audio_player.finished.connect(finished)
 	add_child(_audio_player)
 
 
+var _last_time:float = 0.0
+
 func _process(_delta: float) -> void:
 	if paused or !has_started: return # Nao need to calculate if we aren't progressing lol
+	
+	# Thank you swordcube for letting me know that we should use deltatime and not audio time because
+	# im an idiot and forget that audio pipeline != game pipeline
+	var dt:float = _delta * 1000
+	if (playback_position == _last_time): song_position += dt
+	else:
+		if (abs(playback_position - song_position) >= dt): song_position = playback_position
+		else: song_position += dt
+		_last_time = playback_position
 	
 	var old_step:int = cur_step
 	var old_beat:int = cur_beat
@@ -259,12 +266,14 @@ func finished() -> void:
 	stop()
 	bpm_changes = [BpmChange.dummy]
 	on_conductor_finished.emit()## When the audio is [finished] playeing
-	syncronized_stream.stream_count = 0
+	
+	if audio_stream is AudioStreamSynchronized: audio_stream.stream_count = 0
 
-var syncronized_stream:AudioStreamSynchronized = AudioStreamSynchronized.new()
 func add_audio_to_sync(stream:AudioStream):
-	syncronized_stream.set_sync_stream(syncronized_stream.stream_count, stream)
-	syncronized_stream.stream_count += 1
+	if audio_stream is not AudioStreamSynchronized: return
+	audio_stream.set_sync_stream(audio_stream.stream_count, stream)
+	audio_stream.stream_count += 1
 
 func set_audio_to_sync(index:int, stream:AudioStream):
-	syncronized_stream.set_sync_stream(index, stream)
+	if audio_stream is not AudioStreamSynchronized: return
+	audio_stream.set_sync_stream(index, stream)
