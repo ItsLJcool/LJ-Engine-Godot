@@ -9,7 +9,7 @@ var chart:Chart = Chart.from_cne_chart(song_name, diff)
 
 @onready var ui_layer:CanvasLayer = $UILayer
 
-var temp_char:Character = Character.new()
+var temp_char:Character = Character.new("Bergadam")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

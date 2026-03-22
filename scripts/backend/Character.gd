@@ -6,14 +6,11 @@ class_name Character extends AnimatedSprite2D
 @warning_ignore("UNUSED_PRIVATE_CLASS_VARIABLE")
 @export_tool_button("Play Debug Animation") var _debug_play = func(): play_anim(animation_debug, true)
 
-#@warning_ignore("UNUSED_PRIVATE_CLASS_VARIABLE")
-#@export_tool_button("Save SparrowAtlas") var _save_atlas = func():
-	#ResourceSaver.save(sparrow_atlas, PATH%cur_character + SparrowAtlas.export_type, SparrowAtlas.save_flags)
-
 static var PATH:StringName = &"res://assets/characters/%s"
 
 @export_tool_button("Reload Character") var reload = func():
 	update_sprite()
+	update_ghost()
 	pass
 
 
@@ -23,7 +20,7 @@ static var PATH:StringName = &"res://assets/characters/%s"
 		sparrow_atlas = v
 		sprite_frames = v.sprite_frames
 
-var cur_character:String
+@export var cur_character:String = "bf"
 
 func update_sprite() -> void:
 	sparrow_atlas = SparrowAtlas._load(PATH % cur_character)
@@ -59,18 +56,22 @@ func play_sing_anim(dir:FunkinHelper.DirectionType) -> void:
 	
 	play_anim(singDir+suffix, true)
 
-var ghost:GhostHandler
+var ghost:GhostHandler = null
 static var editor_ghost:bool = false
 
-func _init(char_name:String = "bf"):
-	cur_character = char_name
+func _init(char_name:Variant = null):
+	if char_name != null: cur_character = char_name
 	if not Engine.is_editor_hint():
 		Conductor.on_beat_hit.connect(beat_hit)
 	elif not editor_ghost:
 		editor_ghost = true
-		ghost = GhostHandler.new(Character.new(cur_character))
-		add_child(ghost)
+		update_ghost()
 	editor_ghost = false
+
+func update_ghost():
+	if ghost != null: ghost.queue_free()
+	ghost = GhostHandler.new(Character.new(cur_character))
+	add_child(ghost)
 
 func _ready() -> void:
 	update_sprite()
